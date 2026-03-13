@@ -67,11 +67,15 @@ export default function NotificationsPage() {
       const res = await fetch(`/api/notifications?id=${id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to delete");
+      }
       fetchNotifications();
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      alert("Ошибка: " + err.message);
     }
+
   };
 
   const getIcon = (type: string) => {

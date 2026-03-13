@@ -49,7 +49,8 @@ export async function POST(req: Request) {
         attachments: attachments || photos || [],
         creatorId: (session.user as any).id,
         clientId: (session.user as any).id,
-        status: "OPEN",
+        status: "OPENED",
+
         priority: "MEDIUM",
       })
       .select()

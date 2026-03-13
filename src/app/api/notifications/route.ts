@@ -22,10 +22,24 @@ export async function GET() {
 
     const unreadNotifications = allNotifications.filter(n => !n.read);
 
+    // Разделяем message обратно на поля для фронтенда
+
+    const mapped = (allNotifications || []).map(n => {
+      const parts = n.message.split(': ');
+      return {
+        ...n,
+        type: n.message.toLowerCase().includes('внимание') ? 'alert' : 'info',
+        title: parts[0] || 'Уведомление',
+        description: parts.slice(1).join(': '),
+        isRead: n.read,
+      };
+    });
+
     return NextResponse.json({
-      notifications: allNotifications,
+      notifications: mapped,
       unreadCount: unreadNotifications.length
     });
+
   } catch (error) {
     console.error("Error fetching notifications:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -134,7 +148,11 @@ export async function DELETE(req: Request) {
       .delete()
       .eq('id', notificationId);
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error deleting notification:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
 
     return NextResponse.json({ success: true });
   } catch (error) {

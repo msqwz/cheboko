@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import pageStyles from "@/app/page.module.css";
-import { Plus, Search, MapPin, Coffee, MoreVertical, Edit2, Loader2, X } from "lucide-react";
+import { Plus, Search, MapPin, Coffee, MoreVertical, Edit2, Loader2, X, Trash2 } from "lucide-react";
+
 import clsx from "clsx";
 
 export default function ClientsPage() {
@@ -13,11 +14,13 @@ export default function ClientsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [editingItem, setEditingItem] = useState<any>(null);
   const [newLocation, setNewLocation] = useState({
     legalName: "",
     address: "",
     managerId: "",
   });
+
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -43,27 +46,69 @@ export default function ClientsPage() {
     fetchData();
   }, []);
 
-  const handleAddLocation = async (e: React.FormEvent) => {
+  const handleSaveLocation = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/locations", {
-        method: "POST",
+      const url = editingItem ? `/api/locations` : "/api/locations";
+      const method = editingItem ? "PATCH" : "POST";
+      
+      const payload = editingItem 
+        ? { ...newLocation, id: editingItem.id }
+        : newLocation;
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newLocation),
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Failed to create");
+      if (!res.ok) {
+
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to save");
+      }
+
       
       setIsModalOpen(false);
+      setEditingItem(null);
       setNewLocation({ legalName: "", address: "", managerId: "" });
       fetchData();
     } catch (err) {
-      alert("Ошибка при создании точки");
+      alert("Ошибка при сохранении точки");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handleEdit = (loc: any) => {
+    setEditingItem(loc);
+    setNewLocation({
+      legalName: loc.name || "",
+      address: loc.address || "",
+      managerId: loc.clientId || "",
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm("Удалить эту точку? Все связанные кофемашины и заявки будут удалены!")) return;
+
+    
+    try {
+      const res = await fetch(`/api/locations?id=${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to delete");
+      }
+      setLocations(locations.filter(l => l.id !== id));
+    } catch (err: any) {
+      alert("Ошибка: " + err.message);
+    }
+
+  };
+
 
   const filteredClients = locations.filter(c => 
     (c.legalName?.toLowerCase() || "").includes(search.toLowerCase()) || 
@@ -148,14 +193,26 @@ export default function ClientsPage() {
                   </td>
                   <td>
                     <div style={{ display: "flex", gap: 8 }}>
-                      <button style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
+                      <button 
+                        onClick={() => handleEdit(loc)}
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent-primary)" }}
+                        title="Редактировать"
+                      >
                         <Edit2 size={16} />
+                      </button>
+                      <button 
+                        onClick={(e) => handleDelete(loc.id, e)}
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--status-high)" }}
+                        title="Удалить"
+                      >
+                        <Trash2 size={16} />
                       </button>
                       <button style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
                         <MoreVertical size={16} />
                       </button>
                     </div>
                   </td>
+
                 </tr>
               ))}
               {!isLoading && filteredClients.length === 0 && (
@@ -175,12 +232,17 @@ export default function ClientsPage() {
         <div className={pageStyles.modalOverlay}>
           <div className={pageStyles.modalContent}>
             <div className={pageStyles.modalHeader}>
-              <h2>Новая точка / Клиент</h2>
-              <button className={pageStyles.closeBtn} onClick={() => setIsModalOpen(false)}>
+              <h2>{editingItem ? "Редактировать точку" : "Новая точка / Клиент"}</h2>
+              <button className={pageStyles.closeBtn} onClick={() => {
+                setIsModalOpen(false);
+                setEditingItem(null);
+                setNewLocation({ legalName: "", address: "", managerId: "" });
+              }}>
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleAddLocation}>
+            <form onSubmit={handleSaveLocation}>
+
               <div className={pageStyles.modalBody}>
                 <div className={pageStyles.formGroup}>
                   <label className={pageStyles.formLabel}>Название организации</label>
@@ -219,11 +281,16 @@ export default function ClientsPage() {
                 </div>
               </div>
               <div className={pageStyles.modalFooter}>
-                <button type="button" className={pageStyles.btnSecondary} onClick={() => setIsModalOpen(false)}>Отмена</button>
+                <button type="button" className={pageStyles.btnSecondary} onClick={() => {
+                  setIsModalOpen(false);
+                  setEditingItem(null);
+                  setNewLocation({ legalName: "", address: "", managerId: "" });
+                }}>Отмена</button>
                 <button type="submit" className={pageStyles.btnPrimary} disabled={isSubmitting}>
-                  {isSubmitting ? "Создание..." : "Создать точку"}
+                  {isSubmitting ? "Сохранение..." : (editingItem ? "Сохранить изменения" : "Создать точку")}
                 </button>
               </div>
+
             </form>
           </div>
         </div>

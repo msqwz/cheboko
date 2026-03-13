@@ -76,7 +76,11 @@ export default function EquipmentPage() {
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to save");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to save");
+      }
+
 
       setIsModalOpen(false);
       setEditingItem(null);
@@ -108,15 +112,20 @@ export default function EquipmentPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Удалить это оборудование?")) return;
+    if (!window.confirm("Удалить это оборудование?")) return;
+
     
     try {
       const res = await fetch(`/api/equipment?id=${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to delete");
+      }
       fetchData();
     } catch (err: any) {
       alert("Ошибка: " + err.message);
     }
+
   };
 
   const filteredEquipment = equipment.filter(eq =>

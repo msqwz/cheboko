@@ -57,24 +57,32 @@ export async function GET(
 // Разрешённые переходы статусов по ролям
 const ALLOWED_STATUS_TRANSITIONS: Record<string, Record<string, string[]>> = {
   ADMIN: {
-    CREATED:   ["OPENED", "CANCELED"],
-    OPENED:    ["ASSIGNED", "CANCELED"],
-    ASSIGNED:  ["ENROUTE", "OPENED", "CANCELED"],
-    ENROUTE:   ["IN_WORK", "ASSIGNED", "CANCELED"],
-    IN_WORK:   ["COMPLETED", "ON_HOLD", "CANCELED"],
-    ON_HOLD:   ["IN_WORK", "CANCELED"],
+    CREATED:   ["OPENED", "CANCELED", "OPEN", "ASSIGNED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    OPENED:    ["ASSIGNED", "CANCELED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    OPEN:      ["ASSIGNED", "CANCELED", "OPENED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    ASSIGNED:  ["ENROUTE", "OPENED", "CANCELED", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    ENROUTE:   ["IN_WORK", "ASSIGNED", "CANCELED", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    IN_WORK:   ["COMPLETED", "ON_HOLD", "CANCELED", "RESOLVED", "ASSIGNED", "ENROUTE"],
+    ON_HOLD:   ["IN_WORK", "CANCELED", "ASSIGNED", "ENROUTE", "COMPLETED", "RESOLVED"],
     COMPLETED: [],
+    RESOLVED:  [],
     CANCELED:  [],
+    CLOSED:    [],
+
   },
   OPERATOR: {
-    CREATED:   ["OPENED", "CANCELED"],
+    CREATED:   ["OPENED", "CANCELED", "OPEN"],
     OPENED:    ["ASSIGNED", "CANCELED"],
+    OPEN:      ["ASSIGNED", "CANCELED", "OPENED"],
     ASSIGNED:  ["ENROUTE", "OPENED", "CANCELED"],
     ENROUTE:   ["IN_WORK", "ASSIGNED"],
-    IN_WORK:   ["ON_HOLD"],
+    IN_WORK:   ["ON_HOLD", "COMPLETED", "RESOLVED"],
     ON_HOLD:   ["IN_WORK"],
     COMPLETED: [],
+    RESOLVED:  [],
     CANCELED:  [],
+    CLOSED:    [],
+
   },
   ENGINEER: {
     ASSIGNED:  ["ENROUTE"],
@@ -186,7 +194,11 @@ export async function PATCH(
       .select()
       .single();
 
-    if (updateError) throw updateError;
+    if (updateError) {
+      console.error("Supabase error updating ticket:", updateError);
+      return NextResponse.json({ error: updateError.message }, { status: 500 });
+    }
+
 
     // Запись истории
     if (data.status && data.status !== ticket.status) {

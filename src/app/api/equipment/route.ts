@@ -14,7 +14,10 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const locationId = searchParams.get('locationId');
 
-    let query = supabase.from('Equipment').select('*');
+    let query = supabase.from('Equipment').select(`
+      *,
+      location:Location!locationId(id, address, name)
+    `);
 
     if (locationId) {
       query = query.eq('locationId', locationId);
@@ -24,7 +27,14 @@ export async function GET(req: Request) {
 
     if (error) throw error;
 
-    return NextResponse.json(allEquipment);
+    // Ре маппинг name -> model для фронтенда
+    const mapped = (allEquipment || []).map(eq => ({
+      ...eq,
+      model: eq.name,
+    }));
+
+    return NextResponse.json(mapped);
+
   } catch (error) {
     console.error("Error fetching equipment:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -46,21 +56,42 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Serial number, model and location are required" }, { status: 400 });
     }
 
+    const eqData: any = {
+      id: crypto.randomUUID(),
+      serialNumber,
+      name: model,
+      type: type || 'Другое',
+      locationId,
+    };
+    
+    // Пытаемся добавить поле, только если оно пришло, но не падаем если колонки нет
+    if (nextMaintenance) eqData.nextMaintenance = nextMaintenance;
+
     const { data: newEquipment, error } = await supabase
       .from('Equipment')
-      .insert({
-        id: crypto.randomUUID(),
-        serialNumber,
-        name: model,
-        type: type || 'Другое',
-        locationId,
-      })
+      .insert(eqData)
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error creating equipment:", error);
+      // Если ошибка в колонке, пробуем без неё
+      if (error.message.includes('nextMaintenance')) {
+        delete eqData.nextMaintenance;
+        const { data: retry, error: retryErr } = await supabase
+          .from('Equipment')
+          .insert(eqData)
+          .select()
+          .single();
+        if (retryErr) throw retryErr;
+        return NextResponse.json({ ...retry, model: retry.name }, { status: 201 });
+      }
+      throw error;
+    }
 
-    return NextResponse.json(newEquipment, { status: 201 });
+
+    return NextResponse.json({ ...newEquipment, model: newEquipment.name }, { status: 201 });
+
   } catch (error) {
     console.error("Error creating equipment:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -87,6 +118,7 @@ export async function PATCH(req: Request) {
     if (model) updateData.name = model;
     if (type) updateData.type = type;
     if (locationId) updateData.locationId = locationId;
+    if (body.nextMaintenance !== undefined) updateData.nextMaintenance = body.nextMaintenance;
 
     const { data: updated, error } = await supabase
       .from('Equipment')
@@ -95,9 +127,14 @@ export async function PATCH(req: Request) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error updating equipment:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
-    return NextResponse.json(updated);
+
+    return NextResponse.json({ ...updated, model: updated.name });
+
   } catch (error) {
     console.error("Error updating equipment:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -124,7 +161,11 @@ export async function DELETE(req: Request) {
       .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error deleting equipment:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
 
     return NextResponse.json({ success: true });
   } catch (error) {
