@@ -1,0 +1,58 @@
+.bottomNav {
+  display: none;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: var(--bottom-nav-height);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom); /* Поддержка iPhone notch */
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.navList {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--text-muted);
+  width: 25%;
+  height: 100%;
+  transition: all 0.2s ease;
+}
+
+.navItem span {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.active {
+  color: var(--accent-primary);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+}
+
+.active .icon {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 1024px) {
+  .bottomNav {
+    display: flex;
+  }
+}
