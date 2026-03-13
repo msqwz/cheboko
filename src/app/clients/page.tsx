@@ -123,7 +123,8 @@ export default function ClientsPage() {
               ) : filteredClients.map((loc) => (
                 <tr key={loc.id}>
                   <td>
-                    <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{loc.legalName || "Без названия"}</div>
+                    <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{loc.legalName || loc.address || "Объект без названия"}</div>
+
                     <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>ID: {loc.id.substring(0, 8)}...</div>
                   </td>
                   <td>

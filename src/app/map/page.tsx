@@ -123,7 +123,8 @@ export default function TechnicianMap() {
     <div className={clsx("page-container", "animate-fade-in")}>
       <header style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 24, fontWeight: 700 }}>Карта техников</h1>
-        <p style={{ color: "var(--text-muted)", marginTop: 4 }}>Мониторинг местоположения инженеров в реальном времени (СПб)</p>
+        <p style={{ color: "var(--text-muted)", marginTop: 4 }}>Мониторинг местоположения инженеров в реальном времени (Ростов-на-Дону)</p>
+
       </header>
 
       <div className={styles.mapContainer} style={{ display: "flex", gap: 24, height: "calc(100vh - 150px)" }}>

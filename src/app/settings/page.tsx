@@ -4,6 +4,8 @@ import pageStyles from "@/app/page.module.css";
 import clsx from "clsx";
 import { Settings, Save, Bell, Shield, PaintBucket, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+
 
 type SettingsData = {
   companyName: string;
@@ -17,7 +19,10 @@ type SettingsData = {
 };
 
 export default function SettingsPage() {
+  const { data: session } = useSession();
+  const isAdmin = (session?.user as any)?.role === 'ADMIN';
   const [activeTab, setActiveTab] = useState("general");
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [settings, setSettings] = useState<SettingsData>({
@@ -308,16 +313,19 @@ export default function SettingsPage() {
                   Настройки безопасности
                 </h2>
 
-                <div style={{ padding: "16px", background: "var(--bg-hover)", borderRadius: "var(--radius-md)", marginBottom: 16 }}>
-                  <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 8 }}>
-                    🔒 Для изменения настроек безопасности обратитесь к администратору.
-                  </p>
-                </div>
+                {!isAdmin && (
+                  <div style={{ padding: "16px", background: "var(--bg-hover)", borderRadius: "var(--radius-md)", marginBottom: 16 }}>
+                    <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 8 }}>
+                      🔒 Для изменения настроек безопасности обратитесь к главному администратору.
+                    </p>
+                  </div>
+                )}
 
                 <div className={pageStyles.formGroup}>
                   <label className={pageStyles.formLabel}>Сессия (дней)</label>
-                  <input type="text" value="30" disabled className={pageStyles.formInput} style={{ maxWidth: 200 }} />
+                  <input type="text" value="30" disabled={!isAdmin} className={pageStyles.formInput} style={{ maxWidth: 200 }} />
                 </div>
+
 
                 <div className={pageStyles.formGroup}>
                   <label className={pageStyles.formLabel}>Политика паролей</label>

@@ -160,15 +160,16 @@ export default function TicketsPage() {
     
     // CSV Data
     const rows = tickets.map(t => [
-      `#${t.ticketNumber.slice(-4)}`,
+      `"${t.ticketNumber.slice(-4)}"`,
       `"${t.description.replace(/"/g, '""')}"`,
-      t.equipment?.model || "—",
-      t.location?.address || "—",
-      t.status,
-      t.priority,
-      t.engineer?.name || "—",
-      new Date(t.createdAt).toLocaleDateString("ru-RU")
+      `"${(t.equipment?.model || "—").replace(/"/g, '""')}"`,
+      `"${(t.location?.address || "—").replace(/"/g, '""')}"`,
+      `"${t.status}"`,
+      `"${t.priority}"`,
+      `"${(t.engineer?.name || "—").replace(/"/g, '""')}"`,
+      `"${new Date(t.createdAt).toLocaleDateString("ru-RU")}"`
     ]);
+
     
     const csvContent = "\uFEFF" + [headers, ...rows].map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
