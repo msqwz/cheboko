@@ -316,52 +316,52 @@ export default function TicketDetail() {
 
             <div className={styles.divider} />
 
-             {/* Панель Оператора */}
-            <div className={styles.controlGroup}>
-              <span className={styles.infoLabel} style={{ marginBottom: 8, display: "block", fontSize: 12 }}>Панель Оператора (Изменить)</span>
-              
-              <div style={{ marginBottom: 12 }}>
-                <label style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Приоритет:</label>
-                <select 
-                  className={styles.select} 
-                  value={ticket.priority || ""} 
-                  onChange={(e) => updateTicket({ priority: e.target.value })}
-                  disabled={isUpdating}
-                >
-                  <option value="LOW">Низкий</option>
-                  <option value="MEDIUM">Средний</option>
-                  <option value="HIGH">Высокий</option>
-                </select>
-              </div>
+             {/* Панель Оператора / Админа */}
+            {((session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.role === 'OPERATOR') && (
+              <div className={styles.controlGroup}>
+                <span className={styles.infoLabel} style={{ marginBottom: 8, display: "block", fontSize: 12 }}>Панель Оператора (Изменить)</span>
+                
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Приоритет:</label>
+                  <select 
+                    className={styles.select} 
+                    value={ticket.priority || ""} 
+                    onChange={(e) => updateTicket({ priority: e.target.value })}
+                    disabled={isUpdating}
+                  >
+                    <option value="LOW">Низкий</option>
+                    <option value="MEDIUM">Средний</option>
+                    <option value="HIGH">Высокий</option>
+                  </select>
+                </div>
 
-               <div style={{ marginBottom: 12 }}>
-                <label style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Назначить инженера:</label>
-                <select 
-                  className={styles.select} 
-                  value={ticket.engineerId || ""} 
-                  onChange={(e) => updateTicket({ engineerId: e.target.value, status: e.target.value ? "ASSIGNED" : "OPENED" })}
-                  disabled={isUpdating}
-                >
-                  <option value="">-- Выбрать инженера --</option>
-                  {engineers.map(eng => (
-                    <option key={eng.id} value={eng.id}>{eng.name}</option>
-                  ))}
-                </select>
-              </div>
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Назначить инженера:</label>
+                  <select 
+                    className={styles.select} 
+                    value={ticket.engineerId || ""} 
+                    onChange={(e) => updateTicket({ engineerId: e.target.value, status: e.target.value ? "ASSIGNED" : "OPENED" })}
+                    disabled={isUpdating}
+                  >
+                    <option value="">-- Выбрать инженера --</option>
+                    {engineers.map(eng => (
+                      <option key={eng.id} value={eng.id}>{eng.name}</option>
+                    ))}
+                  </select>
+                </div>
 
-               <button 
-                className={styles.btnDanger} 
-                style={{ width: "100%", marginTop: "12px" }}
-                onClick={() => updateTicket({ status: "CANCELED" })}
-                disabled={isUpdating || ticket.status === "CANCELED"}
-               >
+                <button 
+                  className={styles.btnDanger} 
+                  style={{ width: "100%", marginTop: "12px" }}
+                  onClick={() => updateTicket({ status: "CANCELED" })}
+                  disabled={isUpdating || ticket.status === "CANCELED"}
+                >
                   <XCircle size={18} /> Отменить заявку
-               </button>
-            </div>
-
+                </button>
+              </div>
+            )}
           </aside>
         </div>
-
       </div>
     </div>
   );
