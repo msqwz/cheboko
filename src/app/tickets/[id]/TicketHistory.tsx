@@ -36,32 +36,51 @@ export default function TicketHistory({ history }: { history: HistoryItem[] }) {
 
   const renderAction = (item: HistoryItem) => {
     switch (item.action) {
-      case 'STATUS_CHANGE':
+      case 'CREATED':
+      case 'Создание заявки': // Fallback for old data
         return (
           <div className={styles.historyAction}>
-            Изменение статуса: <span className={styles.historyValue}>{translateStatus(item.oldValue || "")}</span> 
+            Создание заявки
+          </div>
+        );
+      case 'STATUS_CHANGE':
+      case 'Смена статуса': // Fallback
+        return (
+          <div className={styles.historyAction}>
+            Смена статуса: <span className={styles.historyValue}>{translateStatus(item.oldValue || "")}</span> 
             <ArrowRight size={12} style={{ margin: '0 4px' }} /> 
             <span className={clsx(styles.historyValue, styles.newValue)}>{translateStatus(item.newValue || "")}</span>
           </div>
         );
       case 'ASSIGNMENT_CHANGE':
+      case 'Назначение инженера': // Fallback
         return (
           <div className={styles.historyAction}>
             <UserPlus size={14} style={{ marginRight: 6 }} />
-            Изменение инженера
+            Назначение инженера
           </div>
         );
       case 'COMMENT_ADDED':
+      case 'Добавлен комментарий': // Fallback
         return (
           <div className={styles.historyAction}>
             <MessageSquare size={14} style={{ marginRight: 6 }} />
             Добавлен комментарий: <span className={styles.historyComment}>"{item.newValue}"</span>
           </div>
         );
+      case 'PRIORITY_CHANGE':
+        return (
+          <div className={styles.historyAction}>
+            Смена приоритета: <span className={styles.historyValue}>{item.oldValue}</span>
+            <ArrowRight size={12} style={{ margin: '0 4px' }} />
+            <span className={clsx(styles.historyValue, styles.newValue)}>{item.newValue}</span>
+          </div>
+        );
       default:
         return item.action;
     }
   };
+
 
   return (
     <section className={styles.sectionBlock} style={{ marginTop: 24 }}>

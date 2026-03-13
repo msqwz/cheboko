@@ -262,11 +262,12 @@ export default function TicketDetail() {
                  {/* Инженер видит свои кнопки, или Админ видит всё */}
                  {(session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.id === ticket.engineerId ? (
                    <>
-                     {ticket.status === "ASSIGNED" && (
+                     {(ticket.status === "ASSIGNED" || (ticket.status === "OPENED" && ticket.engineerId)) && (
                        <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "ENROUTE" })} disabled={isUpdating}>
                          <Play size={18} /> Выехать на адрес
                        </button>
                      )}
+
                      {ticket.status === "ENROUTE" && (
                        <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "IN_WORK" })} disabled={isUpdating}>
                          <Settings size={18} /> Начать работу

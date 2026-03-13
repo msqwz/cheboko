@@ -162,7 +162,15 @@ export async function PATCH(
     const updateData: Record<string, unknown> = {};
     if (data.status) updateData.status = data.status;
     if (data.priority) updateData.priority = data.priority;
-    if (data.engineerId !== undefined) updateData.engineerId = data.engineerId || null;
+    if (data.engineerId !== undefined) {
+      updateData.engineerId = data.engineerId || null;
+      // Если инженер назначается на "Открытую" заявку, переводим её в "Назначена" автоматически
+      if (data.engineerId && ticket.status === 'OPENED' && !data.status) {
+        updateData.status = 'ASSIGNED';
+        data.status = 'ASSIGNED'; // Для последующей записи в историю
+      }
+    }
+
     if (data.operatorComment) updateData.operatorComment = data.operatorComment;
     if (data.engineerComment) updateData.engineerComment = data.engineerComment;
     if (data.holdReason) updateData.holdReason = data.holdReason;

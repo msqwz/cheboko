@@ -29,10 +29,11 @@ export async function recordTicketHistory(
  * Типы действий для истории
  */
 export const HistoryActions = {
-  CREATED: 'Создание заявки',
-  STATUS_CHANGE: 'Смена статуса',
-  ASSIGNMENT_CHANGE: 'Назначение инженера',
-  COMMENT_ADDED: 'Добавлен комментарий',
-  PRIORITY_CHANGE: 'Смена приоритета',
-  ATTACHMENT_ADDED: 'Добавлен файл/фото',
+  CREATED: 'CREATED',
+  STATUS_CHANGE: 'STATUS_CHANGE',
+  ASSIGNMENT_CHANGE: 'ASSIGNMENT_CHANGE',
+  COMMENT_ADDED: 'COMMENT_ADDED',
+  PRIORITY_CHANGE: 'PRIORITY_CHANGE',
+  ATTACHMENT_ADDED: 'ATTACHMENT_ADDED',
 };
+
