@@ -154,49 +154,54 @@ export default function NotificationsPage() {
                     alignItems: "flex-start",
                     padding: "16px",
                     borderRadius: "var(--radius-md)",
-                    background: n.isRead ? "transparent" : "var(--bg-hover)",
+                    background: n.isRead ? "var(--bg-secondary)" : "var(--bg-hover)",
                     border: "1px solid var(--border-color)",
                     position: "relative",
                     transition: "all 0.2s ease"
                   }}
                 >
-                  {!n.isRead && (
-                    <div style={{ position: "absolute", top: 16, right: 16, width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-primary)' }} />
-                  )}
                   <div style={{
-                    width: 40, height: 40, borderRadius: 'var(--radius-full)',
-                    background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                    width: 48, height: 48, borderRadius: 'var(--radius-full)',
+                    background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                    border: '1px solid var(--border-color)'
                   }}>
                     {getIcon(n.type)}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                      <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>{n.title}</h3>
-                      <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{formatTimeAgo(n.createdAt)}</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 2 }}>{n.title}</h3>
+                        <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
+                          <span style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 500 }}>
+                            {n.description?.match(/#\d{4}-\d{2}-\d{4}/)?.[0] || ""}
+                          </span>
+                          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{formatTimeAgo(n.createdAt)}</span>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: 4 }}>
+                        {!n.isRead && (
+                          <button
+                            onClick={() => markAsRead(n.id)}
+                            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 4 }}
+                            title="Отметить как прочитанное"
+                          >
+                            <CheckCircle2 size={18} />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => deleteNotification(n.id)}
+                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 4 }}
+                          title="Удалить"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </div>
                     {n.description && (
-                      <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5, marginTop: 4 }}>
-                        {n.description}
+                      <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                        {n.description.replace(/#\d{4}-\d{2}-\d{4}:?\s?/, '')}
                       </p>
                     )}
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    {!n.isRead && (
-                      <button
-                        onClick={() => markAsRead(n.id)}
-                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 4 }}
-                        title="Отметить как прочитанное"
-                      >
-                        <CheckCircle2 size={16} />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => deleteNotification(n.id)}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 4 }}
-                      title="Удалить"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
                 </div>
               ))}

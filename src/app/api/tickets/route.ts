@@ -176,8 +176,13 @@ export async function GET(req: Request) {
       // Специалист видит только свои заявки
       query = query.eq('creatorId', userId);
     } else if (userRole === 'ENGINEER') {
-      // Инженер видит только назначенные на него
-      query = query.eq('engineerId', userId);
+      // Инженер видит либо назначенные на него, либо созданные им (если передан onlyCreated)
+      const onlyCreated = searchParams.get('onlyCreated') === 'true';
+      if (onlyCreated) {
+        query = query.eq('creatorId', userId);
+      } else {
+        query = query.eq('engineerId', userId);
+      }
     } else if (creatorId) {
       // Дополнительный фильтр если передан явно
       query = query.eq('creatorId', creatorId);
