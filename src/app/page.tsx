@@ -22,6 +22,11 @@ export default async function RootPage() {
     redirect("/tickets");
   }
 
-  // По умолчанию (Админы, Операторы) — на дашборд
+  // Оператор — в свою зону
+  if (role === 'OPERATOR') {
+    redirect("/operator");
+  }
+
+  // По умолчанию (Админы, Менеджеры регионов) — на дашборд
   redirect("/admin");
 }
