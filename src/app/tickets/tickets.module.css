@@ -93,14 +93,56 @@
     gap: 16px;
     margin-bottom: 20px;
   }
+
+  .headerActions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .headerActions > * {
+    flex: 1;
+    justify-content: center;
+  }
   
   .filtersContainer {
-    flex-direction: column;
     padding: 12px;
     gap: 12px;
     margin-bottom: 24px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filterMainRow {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .filterToggleBtn {
+    padding: 10px 16px;
+    background: var(--bg-hover);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .filterSecondaryRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-glass);
+    transition: all 0.3s ease;
+  }
+
+  .mobileHidden {
+    display: none;
   }
   
   .tabsContainer {
@@ -136,74 +178,96 @@
     flex-direction: column;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 16px;
-    margin-bottom: 12px;
+    border-radius: var(--radius-xl);
+    margin-bottom: 16px;
     position: relative;
     box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
 
-  .mobileCard:hover {
-    border-color: var(--accent-primary);
+  .mobileCard:active {
+    transform: scale(0.98);
   }
 
-  .cardTop {
+  .cardHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
+    padding: 12px 16px;
+    background: rgba(var(--bg-hover-rgb), 0.3);
     border-bottom: 1px solid var(--border-glass);
   }
 
   .cardNumber {
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
+    font-size: 12px;
     color: var(--text-muted);
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.5px;
   }
 
-  .cardMenu {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 10;
+  .cardAction {
+    position: relative;
+    margin-left: 8px;
+  }
+
+  .cardBodyLink {
+    padding: 16px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
   }
 
   .cardTitle {
-    font-size: var(--text-base);
+    font-size: 15px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 4px;
-    padding-right: 32px; /* Место под кнопку меню */
+    margin-bottom: 12px;
+    line-height: 1.4;
   }
 
-  .cardMeta {
-    font-size: var(--text-xs);
-    color: var(--text-muted);
+  .cardMainInfo {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  .infoLine {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .infoIcon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
   }
 
   .cardFooter {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto;
     padding-top: 12px;
     border-top: 1px solid var(--border-glass);
   }
 
-  .cardLocation {
-    font-size: var(--text-xs);
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    max-width: 60%;
+  .cardDate {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .cardPriority {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
   }
 }
 
@@ -238,7 +302,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   color: var(--text-primary);
   text-decoration: none;
   background: none;
@@ -279,7 +343,7 @@
 
 @media (max-width: 768px) {
   .desktopOnly {
-    display: none;
+    display: none !important;
   }
   
   .mobileOnly {

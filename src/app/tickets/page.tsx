@@ -184,6 +184,8 @@ export default function TicketsPage() {
     document.body.removeChild(link);
   };
 
+  const [showFilters, setShowFilters] = useState(false);
+
   return (
     <div className={clsx("page-container", "animate-fade-in")}>
       <header className={styles.pageHeader}>
@@ -191,12 +193,12 @@ export default function TicketsPage() {
           <h1 className={pageStyles.title}>Управление заявками</h1>
           <p className={pageStyles.subtitle}>Полный список обращений на ремонт и ТО</p>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <button onClick={handleExportCSV} className={pageStyles.btnSecondary}>
+        <div className={styles.headerActions}>
+          <button onClick={handleExportCSV} className={clsx(pageStyles.btnSecondary, styles.desktopOnly)}>
             Экспорт CSV
           </button>
           <Link href="/tickets/new" className={pageStyles.btnPrimary}>
-            <Plus size={18} /> Создать заявку
+            <Plus size={18} /> <span className={styles.desktopOnly}>Создать заявку</span><span className={styles.mobileOnly}>Создать</span>
           </Link>
         </div>
       </header>
@@ -204,52 +206,62 @@ export default function TicketsPage() {
 
       {/* Блок фильтров */}
       <div className={styles.filtersContainer}>
-        <div className={styles.filterGroup} style={{ flex: 2 }}>
-          <label className={styles.filterLabel}>Поиск</label>
-          <div style={{ position: "relative" }}>
-            <Search size={16} color="var(--text-muted)" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
-            <input 
-              type="text" 
-              placeholder="Поиск по номеру, клиенту или инженеру..." 
-              className={styles.input} 
-              style={{ paddingLeft: 36 }}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        <div className={styles.filterMainRow}>
+          <div className={styles.filterGroup} style={{ flex: 1 }}>
+            <div style={{ position: "relative" }}>
+              <Search size={16} color="var(--text-muted)" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
+              <input 
+                type="text" 
+                placeholder="Поиск..." 
+                className={styles.input} 
+                style={{ paddingLeft: 36 }}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
+          
+          <button 
+            className={clsx(styles.filterToggleBtn, styles.mobileOnly)}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {showFilters ? "Скрыть" : "Фильтры"}
+          </button>
         </div>
         
-        <div className={styles.filterGroup}>
-          <label className={styles.filterLabel}>Статус</label>
-          <select 
-            className={styles.select}
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="all">Все (по вкладке)</option>
-            <option value="CREATED">Создана</option>
-            <option value="OPENED">Открыта</option>
-            <option value="ASSIGNED">Назначен</option>
-            <option value="ENROUTE">В пути</option>
-            <option value="IN_WORK">В работе</option>
-            <option value="ON_HOLD">Пауза</option>
-            <option value="COMPLETED">Выполнена</option>
-            <option value="CANCELED">Отменена</option>
-          </select>
-        </div>
+        <div className={clsx(styles.filterSecondaryRow, !showFilters && styles.mobileHidden)}>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Статус</label>
+            <select 
+              className={styles.select}
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">Все (по вкладке)</option>
+              <option value="CREATED">Создана</option>
+              <option value="OPENED">Открыта</option>
+              <option value="ASSIGNED">Назначен</option>
+              <option value="ENROUTE">В пути</option>
+              <option value="IN_WORK">В работе</option>
+              <option value="ON_HOLD">Пауза</option>
+              <option value="COMPLETED">Выполнена</option>
+              <option value="CANCELED">Отменена</option>
+            </select>
+          </div>
 
-        <div className={styles.filterGroup}>
-          <label className={styles.filterLabel}>Приоритет</label>
-          <select 
-            className={styles.select}
-            value={priorityFilter}
-            onChange={(e) => setPriorityFilter(e.target.value)}
-          >
-            <option value="all">Все приоритеты</option>
-            <option value="HIGH">Высокий</option>
-            <option value="MEDIUM">Средний</option>
-            <option value="LOW">Низкий</option>
-          </select>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Приоритет</label>
+            <select 
+              className={styles.select}
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+            >
+              <option value="all">Все приоритеты</option>
+              <option value="HIGH">Высокий</option>
+              <option value="MEDIUM">Средний</option>
+              <option value="LOW">Низкий</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -374,56 +386,57 @@ export default function TicketsPage() {
           ) : (
             tickets.map((ticket) => (
               <div key={ticket.id} className={styles.mobileCard}>
-                <div className={styles.cardTop}>
-                  <div className={styles.cardNumber}>
-                    <Link href={`/tickets/${ticket.id}`} className={pageStyles.idLink}>
-                      #{ticket.ticketNumber.slice(-4)}
-                    </Link>
-                  </div>
-                  <div>{getStatusBadge(ticket.status)}</div>
-                </div>
-
-                <div className={styles.cardMenu}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenMenuId(openMenuId === ticket.id ? null : ticket.id);
-                    }}
-                    className={styles.actionBtn}
-                  >
-                    <MoreVertical size={20} />
-                  </button>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardNumber}>#{ticket.ticketNumber.slice(-4)}</div>
+                  <div className={styles.cardStatus}>{getStatusBadge(ticket.status)}</div>
                   
-                  {openMenuId === ticket.id && (
-                    <div className={styles.dropdownMenu} style={{ right: 0, top: 32 }} onClick={(e) => e.stopPropagation()}>
-                      <Link href={`/tickets/${ticket.id}`} className={styles.dropdownItem}>
-                         Просмотр
-                      </Link>
-                      <button className={clsx(styles.dropdownItem, styles.successItem)} onClick={(e) => handleQuickComplete(ticket.id, e)}>
-                        Завершить
-                      </button>
-                    </div>
-                  )}
+                  <div className={styles.cardAction}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenMenuId(openMenuId === ticket.id ? null : ticket.id);
+                      }}
+                      className={styles.actionBtn}
+                    >
+                      <MoreVertical size={20} />
+                    </button>
+                    {openMenuId === ticket.id && (
+                      <div className={styles.dropdownMenu} style={{ right: 0, top: 32 }} onClick={(e) => e.stopPropagation()}>
+                        <Link href={`/tickets/${ticket.id}`} className={styles.dropdownItem}>Просмотр</Link>
+                        <button className={clsx(styles.dropdownItem, styles.successItem)} onClick={(e) => handleQuickComplete(ticket.id, e)}>Завершить</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <Link href={`/tickets/${ticket.id}`} style={{ textDecoration: 'none' }}>
+                <Link href={`/tickets/${ticket.id}`} className={styles.cardBodyLink}>
                   <h3 className={styles.cardTitle}>
-                    {ticket.description.split('\n')[0].substring(0, 50)}
-                    {ticket.description.length > 50 ? '...' : ''}
+                    {ticket.description.split('\n')[0].substring(0, 60)}{ticket.description.length > 60 ? '...' : ''}
                   </h3>
                   
-                  <div className={styles.cardMeta}>
-                    <span>{ticket.equipment?.model || "Общее оборудование"}</span>
-                    <span>&middot;</span>
-                    <span>{new Date(ticket.createdAt).toLocaleDateString("ru-RU", { day: '2-digit', month: 'short' })}</span>
+                  <div className={styles.cardMainInfo}>
+                     <div className={styles.infoLine}>
+                        <span className={styles.infoIcon}>📍</span>
+                        <span className={styles.infoText}>{ticket.location?.name || ticket.location?.address}</span>
+                     </div>
+                     <div className={styles.infoLine}>
+                        <span className={styles.infoIcon}>⚙️</span>
+                        <span className={styles.infoText}>{ticket.equipment?.model || "Общее оборудование"}</span>
+                     </div>
+                     <div className={styles.infoLine}>
+                        <span className={styles.infoIcon}>👤</span>
+                        <span className={styles.infoText} style={{ color: !ticket.engineer ? 'var(--text-muted)' : 'inherit' }}>
+                           {ticket.engineer?.name || "Не назначен"}
+                        </span>
+                     </div>
                   </div>
 
                   <div className={styles.cardFooter}>
-                    <div className={styles.cardLocation}>
-                       {ticket.location?.name || ticket.location?.address}
+                    <div className={styles.cardDate}>
+                      📅 {new Date(ticket.createdAt).toLocaleDateString("ru-RU", { day: '2-digit', month: 'short' })}
                     </div>
-                    <div className={clsx(getPriorityClass(ticket.priority))} style={{ fontSize: 11 }}>
-                      {getPriorityText(ticket.priority).toUpperCase()}
+                    <div className={clsx(styles.cardPriority, getPriorityClass(ticket.priority))}>
+                      {getPriorityText(ticket.priority)}
                     </div>
                   </div>
                 </Link>
