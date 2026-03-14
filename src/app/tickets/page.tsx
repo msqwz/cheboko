@@ -195,8 +195,9 @@ export default function TicketsPage() {
           <p className={pageStyles.subtitle}>Полный список обращений на ремонт и ТО</p>
         </div>
         <div className={styles.headerActions}>
-          <button onClick={handleExportCSV} className={clsx(pageStyles.btnSecondary, styles.desktopOnly)}>
-            Экспорт CSV
+          <button onClick={handleExportCSV} className={pageStyles.btnSecondary}>
+            <span className={styles.desktopOnly}>Экспорт CSV</span>
+            <span className={styles.mobileOnly}>Экспорт</span>
           </button>
           <Link href="/tickets/new" className={pageStyles.btnPrimary}>
             <Plus size={18} /> <span className={styles.desktopOnly}>Создать заявку</span><span className={styles.mobileOnly}>Создать</span>

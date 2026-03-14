@@ -41,7 +41,8 @@ export default function Sidebar() {
     pathname === "/login" || 
     pathname === "/register" || 
     pathname === "/forgot-password" || 
-    pathname.startsWith("/reset-password")
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/invite/")
   ) {
     return null;
   }
