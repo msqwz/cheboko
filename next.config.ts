@@ -15,8 +15,6 @@ const nextConfig: NextConfig = {
     ],
   },
   
-  // Режим standalone для деплоя на хостинг
-  output: 'standalone',
   
   // Кэширование
   experimental: {
