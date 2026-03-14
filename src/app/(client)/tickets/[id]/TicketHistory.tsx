@@ -90,20 +90,24 @@ export default function TicketHistory({ history }: { history: HistoryItem[] }) {
           <div key={item.id} className={styles.timelineItem}>
             <div className={styles.timelineDot} />
             <div className={styles.timelineContent}>
-              <div className={styles.timelineHeader}>
-                <span className={styles.timelineUser}>
-                  {item.user?.name || "Система"} ({item.user?.role || "System"})
+              <div className={styles.timelineHeader} style={{ flexWrap: 'wrap', gap: '4px' }}>
+                <span className={styles.timelineUser} style={{ fontSize: '14px' }}>
+                  {item.user?.name || "Система"} 
+                  <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: 4, fontSize: '12px' }}>
+                    ({item.user?.role || "System"})
+                  </span>
                 </span>
-                <span className={styles.timelineDate}>
+                <span className={styles.timelineDate} style={{ width: '100%', marginTop: '2px', opacity: 0.8 }}>
                   {new Date(item.createdAt).toLocaleString("ru-RU", { 
                     day: '2-digit', 
                     month: 'short', 
+                    year: '2-digit',
                     hour: '2-digit', 
                     minute: '2-digit' 
                   })}
                 </span>
               </div>
-              <div className={styles.timelineBody}>
+              <div className={styles.timelineBody} style={{ marginTop: '8px', wordBreak: 'break-word' }}>
                 {renderAction(item)}
               </div>
             </div>
