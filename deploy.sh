@@ -55,6 +55,11 @@ else
     exit 1
 fi
 
+# 3b. Очистка кэша и остановка порта
+echo -e "\n${YELLOW}[3b/5] Очистка кэша и остановка порта...${NC}"
+rm -rf .next
+fuser -k 3000/tcp || true
+
 # 4. Сборка проекта
 echo -e "\n${YELLOW}[4/5] Сборка Next.js...${NC}"
 npm run build

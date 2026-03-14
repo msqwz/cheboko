@@ -170,7 +170,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding-bottom: 100px !important;
+    /* Let global page-container handle bottom padding */
   }
   
   .grid2 {
