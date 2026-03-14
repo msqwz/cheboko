@@ -117,11 +117,22 @@
   }
 
   .filterSecondaryRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    overflow-x: auto;
     gap: 12px;
-    padding-top: 12px;
+    padding-bottom: 8px;
     border-top: 1px solid var(--border-glass);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filterSecondaryRow::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .filterGroup {
+    min-width: 160px;
+    flex: 0 0 auto;
   }
 
   .mobileHidden {
@@ -299,12 +310,18 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-glass);
   min-width: 180px;
+  max-height: 300px;
+  overflow-y: auto;
   z-index: 100;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   margin-top: 4px;
   animation: dropdownFade 0.2s ease-out;
+  scrollbar-width: none;
+}
+
+.dropdownMenu::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes dropdownFade {
