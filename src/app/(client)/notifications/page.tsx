@@ -2,7 +2,7 @@
 
 import pageStyles from "@/app/(admin)/admin/page.module.css";
 import clsx from "clsx";
-import { Bell, CheckCircle2, AlertTriangle, Coffee, Trash2, Loader2 } from "lucide-react";
+import { Bell, CheckCircle2, AlertTriangle, Coffee, Trash2, Loader2, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
 
 type Notification = {
@@ -151,40 +151,43 @@ export default function NotificationsPage() {
                   style={{
                     display: "flex",
                     gap: 16,
-                    alignItems: "flex-start",
                     padding: "16px",
-                    borderRadius: "var(--radius-md)",
-                    background: n.isRead ? "transparent" : "var(--bg-hover)",
+                    borderRadius: "var(--radius-lg)",
+                    background: n.isRead ? "var(--bg-secondary)" : "var(--bg-hover)",
                     border: "1px solid var(--border-color)",
                     position: "relative",
-                    transition: "all 0.2s ease"
+                    transition: "all 0.2s ease",
+                    boxShadow: n.isRead ? "none" : "0 4px 12px rgba(0,0,0,0.05)"
                   }}
                 >
-                  {!n.isRead && (
-                    <div style={{ position: "absolute", top: 16, right: 16, width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-primary)' }} />
-                  )}
                   <div style={{
-                    width: 40, height: 40, borderRadius: 'var(--radius-full)',
-                    background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                    width: 44, height: 44, borderRadius: '50%',
+                    background: n.isRead ? 'var(--bg-primary)' : 'var(--bg-secondary)', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                    border: '1px solid var(--border-color)'
                   }}>
                     {getIcon(n.type)}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                      <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>{n.title}</h3>
-                      <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{formatTimeAgo(n.createdAt)}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                      <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 2, lineHeight: 1.2 }}>{n.title}</h3>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                       <span style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
+                         <Clock size={12} /> {formatTimeAgo(n.createdAt)}
+                       </span>
                     </div>
                     {n.description && (
-                      <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5, marginTop: 4 }}>
+                      <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5, wordBreak: "break-word" }}>
                         {n.description}
                       </p>
                     )}
                   </div>
-                  <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, justifyContent: "center" }}>
                     {!n.isRead && (
                       <button
                         onClick={() => markAsRead(n.id)}
-                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 4 }}
+                        style={{ background: "var(--bg-primary)", border: "1px solid var(--border-color)", borderRadius: 8, cursor: "pointer", color: "var(--accent-primary)", padding: 6, display: "flex" }}
                         title="Отметить как прочитанное"
                       >
                         <CheckCircle2 size={16} />
@@ -192,7 +195,7 @@ export default function NotificationsPage() {
                     )}
                     <button
                       onClick={() => deleteNotification(n.id)}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 4 }}
+                      style={{ background: "var(--bg-primary)", border: "1px solid var(--border-color)", borderRadius: 8, cursor: "pointer", color: "var(--text-muted)", padding: 6, display: "flex" }}
                       title="Удалить"
                     >
                       <Trash2 size={16} />

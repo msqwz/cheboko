@@ -14,6 +14,7 @@ export default function NewTicketPage() {
   const [filteredEquipments, setFilteredEquipments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   // Фото
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
@@ -59,6 +60,13 @@ export default function NewTicketPage() {
               break;
             }
           }
+        }
+
+        // Focus description if we have location/equipment pre-filled
+        if (locId || eqId) {
+          setTimeout(() => {
+            descriptionRef.current?.focus();
+          }, 500);
         }
       } catch (err) {
         console.error("Failed to fetch locations:", err);
@@ -219,6 +227,7 @@ export default function NewTicketPage() {
           <div className={styles.formGroup}>
             <label className={styles.label}>Подробное описание <span className={styles.required}>*</span></label>
             <textarea 
+              ref={descriptionRef}
               className={styles.textarea} 
               placeholder="Опишите, что именно произошло. Например: 'Экран погас после скачка напряжения...'"
               required

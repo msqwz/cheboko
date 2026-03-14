@@ -188,8 +188,14 @@ export default function TicketsPage() {
     <div className={clsx("page-container", "animate-fade-in")}>
       <header className={styles.pageHeader}>
         <div>
-          <h1 className={pageStyles.title}>Управление заявками</h1>
-          <p className={pageStyles.subtitle}>Полный список обращений на ремонт и ТО</p>
+          <h1 className={pageStyles.title}>
+            {userRole === 'CLIENT_SPECIALIST' ? "Мои заявки" : "Управление заявками"}
+          </h1>
+          <p className={pageStyles.subtitle}>
+            {userRole === 'CLIENT_SPECIALIST' 
+              ? "Список созданных вами обращений" 
+              : "Полный список обращений на ремонт и ТО"}
+          </p>
         </div>
         <div className={styles.headerActions}>
           <Link href="/tickets/new" className={pageStyles.btnPrimary}>
@@ -224,39 +230,43 @@ export default function TicketsPage() {
           </button>
         </div>
 
-        <div className={clsx(styles.filterSecondaryRow, !showFilters && styles.mobileHidden)}>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Статус</label>
-            <select
-              className={styles.select}
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">Все (по вкладке)</option>
-              <option value="CREATED">Создана</option>
-              <option value="OPENED">Открыта</option>
-              <option value="ASSIGNED">Назначен</option>
-              <option value="ENROUTE">В пути</option>
-              <option value="IN_WORK">В работе</option>
-              <option value="ON_HOLD">Пауза</option>
-              <option value="COMPLETED">Выполнена</option>
-              <option value="CANCELED">Отменена</option>
-            </select>
-          </div>
+        <div className={clsx(styles.filterSecondaryRow, (!showFilters || userRole === 'CLIENT_SPECIALIST') && styles.mobileHidden)}>
+          {userRole !== 'CLIENT_SPECIALIST' && (
+            <>
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Статус</label>
+                <select
+                  className={styles.select}
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="all">Все (по вкладке)</option>
+                  <option value="CREATED">Создана</option>
+                  <option value="OPENED">Открыта</option>
+                  <option value="ASSIGNED">Назначен</option>
+                  <option value="ENROUTE">В пути</option>
+                  <option value="IN_WORK">В работе</option>
+                  <option value="ON_HOLD">Пауза</option>
+                  <option value="COMPLETED">Выполнена</option>
+                  <option value="CANCELED">Отменена</option>
+                </select>
+              </div>
 
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Приоритет</label>
-            <select
-              className={styles.select}
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-            >
-              <option value="all">Все приоритеты</option>
-              <option value="HIGH">Высокий</option>
-              <option value="MEDIUM">Средний</option>
-              <option value="LOW">Низкий</option>
-            </select>
-          </div>
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Приоритет</label>
+                <select
+                  className={styles.select}
+                  value={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.value)}
+                >
+                  <option value="all">Все приоритеты</option>
+                  <option value="HIGH">Высокий</option>
+                  <option value="MEDIUM">Средний</option>
+                  <option value="LOW">Низкий</option>
+                </select>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
