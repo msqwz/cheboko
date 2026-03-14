@@ -37,11 +37,11 @@ echo -e "${GREEN}✓ Свободное место на диске: ${FREE_DISK}
 
 # 2. Обновление кода
 echo -e "\n${YELLOW}[2/5] Обновление кода из Git...${NC}"
-git pull
+git fetch origin main && git reset --hard origin/main
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✓ Код успешно обновлен${NC}"
+    echo -e "${GREEN}✓ Код успешно обновлен (режим hard reset)${NC}"
 else
-    echo -e "${RED}✗ Ошибка при git pull${NC}"
+    echo -e "${RED}✗ Ошибка при обновлении кода${NC}"
     exit 1
 fi
 
