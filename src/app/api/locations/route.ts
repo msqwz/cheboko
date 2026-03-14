@@ -13,12 +13,21 @@ export async function GET() {
 
     const { data: allLocations, error } = await supabase
       .from('Location')
-      .select('*, legalName:name, equipments:Equipment(*)');
+      .select('*, name, address, equipments:Equipment(*)');
 
     if (error) throw error;
 
-    console.log(`[LOCATIONS] Fetched ${allLocations?.length} locations with equipment`);
-    return NextResponse.json(allLocations);
+    // Ре маппинг для консистентности: name -> legalName и оборудование name -> model
+    const mapped = (allLocations || []).map(loc => ({
+      ...loc,
+      legalName: loc.name,
+      equipments: (loc.equipments || []).map((eq: any) => ({
+        ...eq,
+        model: eq.name
+      }))
+    }));
+
+    return NextResponse.json(mapped);
   } catch (error: any) {
     console.error("Error fetching locations:", error);
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });

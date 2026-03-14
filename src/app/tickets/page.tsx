@@ -268,8 +268,9 @@ export default function TicketsPage() {
         </button>
       </div>
 
-      <div className={pageStyles.card}>
-        <div className={pageStyles.tableContainer}>
+      <div className={clsx(pageStyles.card, styles.ticketsWrapper)}>
+        {/* Desktop Table */}
+        <div className={clsx(pageStyles.tableContainer, styles.desktopOnly)}>
           <table className={pageStyles.table}>
             <thead>
               <tr>
@@ -362,6 +363,73 @@ export default function TicketsPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className={styles.mobileOnly}>
+          {isLoading ? (
+            <div style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>Загрузка...</div>
+          ) : tickets.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>Заявок в этой категории пока нет.</div>
+          ) : (
+            tickets.map((ticket) => (
+              <div key={ticket.id} className={styles.mobileCard}>
+                <div className={styles.cardTop}>
+                  <div className={styles.cardNumber}>
+                    <Link href={`/tickets/${ticket.id}`} className={pageStyles.idLink}>
+                      #{ticket.ticketNumber.slice(-4)}
+                    </Link>
+                  </div>
+                  <div>{getStatusBadge(ticket.status)}</div>
+                </div>
+
+                <div className={styles.cardMenu}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === ticket.id ? null : ticket.id);
+                    }}
+                    className={styles.actionBtn}
+                  >
+                    <MoreVertical size={20} />
+                  </button>
+                  
+                  {openMenuId === ticket.id && (
+                    <div className={styles.dropdownMenu} style={{ right: 0, top: 32 }} onClick={(e) => e.stopPropagation()}>
+                      <Link href={`/tickets/${ticket.id}`} className={styles.dropdownItem}>
+                         Просмотр
+                      </Link>
+                      <button className={clsx(styles.dropdownItem, styles.successItem)} onClick={(e) => handleQuickComplete(ticket.id, e)}>
+                        Завершить
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <Link href={`/tickets/${ticket.id}`} style={{ textDecoration: 'none' }}>
+                  <h3 className={styles.cardTitle}>
+                    {ticket.description.split('\n')[0].substring(0, 50)}
+                    {ticket.description.length > 50 ? '...' : ''}
+                  </h3>
+                  
+                  <div className={styles.cardMeta}>
+                    <span>{ticket.equipment?.model || "Общее оборудование"}</span>
+                    <span>&middot;</span>
+                    <span>{new Date(ticket.createdAt).toLocaleDateString("ru-RU", { day: '2-digit', month: 'short' })}</span>
+                  </div>
+
+                  <div className={styles.cardFooter}>
+                    <div className={styles.cardLocation}>
+                       {ticket.location?.name || ticket.location?.address}
+                    </div>
+                    <div className={clsx(getPriorityClass(ticket.priority))} style={{ fontSize: 11 }}>
+                      {getPriorityText(ticket.priority).toUpperCase()}
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
