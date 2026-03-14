@@ -1,4 +1,5 @@
 import Sidebar from "@/components/layout/Sidebar";
+import BottomNav from "@/components/layout/BottomNav";
 
 export default function ClientLayout({
   children,

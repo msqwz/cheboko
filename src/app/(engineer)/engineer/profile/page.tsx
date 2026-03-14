@@ -273,11 +273,18 @@ export default function ProfilePage() {
 
             <section style={{ borderTop: "1px solid var(--border-color)", paddingTop: 32, marginTop: 'auto' }}>
               <button
-                onClick={() => signOut()}
+                onClick={() => signOut({ callbackUrl: "/login" })}
                 className={pageStyles.btnSecondary}
-                style={{ color: "var(--status-high)", background: "rgba(239, 68, 68, 0.1)" }}
+                style={{ 
+                  color: "var(--status-high)", 
+                  background: "rgba(239, 68, 68, 0.1)",
+                  width: "100%",
+                  justifyContent: "center",
+                  padding: "14px",
+                  fontSize: "16px"
+                }}
               >
-                <LogOut size={16} />
+                <LogOut size={20} />
                 Выйти из аккаунта
               </button>
             </section>

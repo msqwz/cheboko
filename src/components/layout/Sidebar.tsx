@@ -190,7 +190,7 @@ export default function Sidebar() {
             {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
           </button>
           <button
-            onClick={() => signOut()}
+            onClick={() => signOut({ callbackUrl: "/login" })}
             className={styles.logoutBtn}
             title="Выйти"
           >
