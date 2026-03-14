@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Plus, Search, MoreVertical, Eye, Edit2, Trash2, CheckCircle, XCircle } from "lucide-react";
+import { Plus, Search, MoreVertical, Eye, Trash2, CheckCircle, XCircle } from "lucide-react";
 import styles from "./tickets.module.css";
 import pageStyles from "@/app/page.module.css";
 import clsx from "clsx";
@@ -346,29 +346,24 @@ export default function TicketsPage() {
                             onClick={(e) => handleDeleteTicket(ticket.id, e)}
                           >
                             <Trash2 size={16} /> Удалить
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              {!isLoading && tickets.length === 0 && (
+                <tr>
+                  <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>
+                    Заявок в этой категории пока нет.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-  );
-}
- onClick={(e) => handleDeleteTicket(openMenuId, e)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "12px 16px",
-                  width: "100%",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "var(--status-high)",
-                  textAlign: "left",
-                }}
-              >
-                <Trash2 size={16} /> Удалить
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
