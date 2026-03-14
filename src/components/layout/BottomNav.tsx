@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ListTodo, PlusCircle, User } from "lucide-react";
+import { LayoutDashboard, ListTodo, PlusCircle, User } from "lucide-react";
 import styles from "./BottomNav.module.css";
 import clsx from "clsx";
 
@@ -32,7 +32,7 @@ export default function BottomNav() {
 
   // Полное меню для остальных ролей
   const fullNavItems = [
-    { href: "/", label: "Главная", icon: ListTodo },
+    { href: "/", label: "Главная", icon: LayoutDashboard },
     { href: "/tickets", label: "Заявки", icon: ListTodo },
     { href: "/tickets/new", label: "Создать", icon: PlusCircle },
     { href: "/profile", label: "Профиль", icon: User },

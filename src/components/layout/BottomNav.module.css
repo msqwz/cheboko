@@ -20,6 +20,14 @@
   align-items: center;
   height: 100%;
   width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.navList::-webkit-scrollbar {
+  display: none;
 }
 
 .navItem {

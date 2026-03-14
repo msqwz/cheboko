@@ -278,13 +278,24 @@
   }
 
   .actionBtnRow {
-    gap: 12px;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 8px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .actionBtnRow::-webkit-scrollbar {
+    display: none;
   }
 
   .btnPrimary, .btnWarning, .btnDanger {
-    padding: 14px 20px;
-    font-size: 14px;
-    width: 100%;
+    padding: 12px 18px;
+    font-size: 13px;
+    width: auto;
+    min-width: fit-content;
     border-radius: var(--radius-md);
   }
 }
@@ -389,6 +400,7 @@
 
 @media (max-width: 768px) {
   .detailContainer {
-    /* Let global page-container handle bottom padding */
+    display: flex;
+    flex-direction: column;
   }
 }
