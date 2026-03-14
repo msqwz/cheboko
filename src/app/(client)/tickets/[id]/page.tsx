@@ -381,7 +381,6 @@ export default function TicketDetail() {
           </aside>
         </div>
       </div>
-      </div>
     </div>
   );
 }
