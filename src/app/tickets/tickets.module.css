@@ -203,13 +203,13 @@
 
   .headerActions {
     display: flex;
-    flex-direction: column; /* Stack buttons on mobile */
+    flex-direction: row; /* Horizontal row */
     gap: 8px;
     width: 100%;
   }
 
   .headerActions > * {
-    width: 100%;
+    flex: 1; /* Both take equal space */
     justify-content: center;
   }
   
