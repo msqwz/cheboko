@@ -75,8 +75,6 @@ export default function TicketDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [engineerComment, setEngineerComment] = useState("");
-  const [operatorComment, setOperatorComment] = useState("");
-  const [showCloseForm, setShowCloseForm] = useState(false);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -84,7 +82,7 @@ export default function TicketDetail() {
       setIsLoading(true);
       try {
         const [ticketRes, engRes] = await Promise.all([
-          fetch(`/api/tickets/${ticketId}`),
+          fetch(`/api/network/tickets/${ticketId}`),
           fetch('/api/users/engineers')
         ]);
         
@@ -95,7 +93,6 @@ export default function TicketDetail() {
         
         setTicket(ticketData);
         setEngineers(engData);
-        if (ticketData.operatorComment) setOperatorComment(ticketData.operatorComment);
       } catch (err) {
         console.error("Failed to fetch data:", err);
       } finally {
@@ -108,27 +105,83 @@ export default function TicketDetail() {
   const updateTicket = async (data: any) => {
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/tickets/${ticketId}`, {
+      const res = await fetch(`/api/network/tickets/${ticketId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to update ticket");
-      }
+      if (!res.ok) throw new Error("Failed to update ticket");
       
       const updatedTicket = await res.json();
       setTicket(updatedTicket);
       setEngineerComment(""); // Сброс комментария
-      setShowCloseForm(false);
-    } catch (err: any) {
-      alert("Ошибка: " + err.message);
+    } catch (err) {
+      alert("Ошибка при обновлении. Попробуйте снова.");
       console.error(err);
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  const renderActions = () => {
+    return (
+       <div className={styles.actionBtnRow}>
+         {/* Инженер видит свои кнопки, или Админ видит всё */}
+         {(session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.id === ticket.engineerId ? (
+           <>
+             {(ticket.status === "ASSIGNED" || (ticket.status === "OPENED" && ticket.engineerId)) && (
+               <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "ENROUTE" })} disabled={isUpdating}>
+                 <Play size={18} /> Выехать на адрес
+               </button>
+             )}
+
+             {ticket.status === "ENROUTE" && (
+               <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "IN_WORK" })} disabled={isUpdating}>
+                 <Settings size={18} /> Начать работу
+               </button>
+             )}
+             {(ticket.status === "IN_WORK" || ticket.status === "ENROUTE") && (
+               <div style={{ width: '100%', marginTop: 8 }}>
+                 <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>Комментарий (необязательно):</label>
+                 <textarea 
+                   className={styles.textarea} 
+                   placeholder="Что сделано / причина паузы..."
+                   value={engineerComment}
+                   onChange={(e) => setEngineerComment(e.target.value)}
+                   style={{ width: '100%', marginBottom: 12 }}
+                 />
+                 
+                 <div className={styles.actionBtnRow}>
+                   <button className={styles.btnWarning} onClick={() => updateTicket({ status: "ON_HOLD", engineerComment })} disabled={isUpdating}>
+                     <Pause size={18} /> Пауза
+                   </button>
+                   {ticket.status === "IN_WORK" && (
+                     <button className={styles.btnPrimary} style={{ backgroundColor: "var(--status-success)" }} onClick={() => updateTicket({ status: "COMPLETED", engineerComment })} disabled={isUpdating}>
+                       <CheckCircle size={18} /> Выполнено
+                     </button>
+                   )}
+                 </div>
+               </div>
+             )}
+             {ticket.status === "ON_HOLD" && (
+               <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "IN_WORK" })} disabled={isUpdating}>
+                 <Play size={18} /> Возобновить
+               </button>
+             )}
+             {ticket.status === "COMPLETED" && (
+               <p style={{ color: 'var(--status-success)', fontSize: 13, fontWeight: 500 }}>Заявка успешно закрыта.</p>
+             )}
+           </>
+         ) : (
+           <p style={{ fontSize: 13, color: "var(--text-muted)", fontStyle: "italic" }}>
+             {ticket.status === "CREATED" || ticket.status === "OPENED" 
+               ? "Ожидайте назначения инженера или смены статуса диспетчером."
+               : "Только назначенный инженер может менять статус."}
+           </p>
+         )}
+       </div>
+    );
   };
 
   if (isLoading) return <div className="page-container">Загрузка данных заявки...</div>;
@@ -146,8 +199,20 @@ export default function TicketDetail() {
       <header className={styles.header}>
         <div className={styles.titleRow}>
           <span className={styles.ticketId}>#{ticket.ticketNumber.slice(-4)}</span>
-          <h1 className={styles.ticketTitle}>{ticket.description.split('\n')[0].substring(0, 60)}</h1>
+          <h1 className={styles.ticketTitle}>{ticket.description.split('\n')[0].substring(0, 100)}</h1>
         </div>
+        
+        {/* Статус и действия сверху ТОЛЬКО на мобильных */}
+        <div className={styles.mobileStatusHeader}>
+          {getStatusBadge(ticket.status)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, fontSize: 13, background: 'var(--bg-primary)', padding: '8px 12px', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+             <User size={14} color="var(--accent-primary)" />
+             <span style={{ color: 'var(--text-muted)' }}>Инженер:</span>
+             <span style={{ fontWeight: 600 }}>{ticket.engineer?.name || "Не назначен"}</span>
+          </div>
+          {renderActions()}
+        </div>
+
         <div className={styles.metaRow}>
           <div className={styles.metaItem}>
             <Clock size={16} /> Создана: {new Date(ticket.createdAt).toLocaleString("ru-RU")}
@@ -243,7 +308,7 @@ export default function TicketDetail() {
         </div>
 
 
-        <div>
+        <div className={styles.desktopSidebarActions}>
           <aside className={styles.sectionBlock}>
             <h2 className={styles.sectionHeader}>Статус и Управление</h2>
 
@@ -264,62 +329,7 @@ export default function TicketDetail() {
             {/* Блок действий для Инженера */}
             <div className={styles.controlGroup}>
                <span className={styles.infoLabel} style={{ marginBottom: 8, display: "block" }}>Действия по заявке</span>
-               
-               <div className={styles.actionBtnRow}>
-                 {/* Инженер видит свои кнопки, или Админ видит всё */}
-                 {(session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.id === ticket.engineerId ? (
-                   <>
-                     {(ticket.status === "ASSIGNED" || (ticket.status === "OPENED" && ticket.engineerId)) && (
-                       <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "ENROUTE" })} disabled={isUpdating}>
-                         <Play size={18} /> Выехать на адрес
-                       </button>
-                     )}
-
-                     {ticket.status === "ENROUTE" && (
-                       <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "IN_WORK" })} disabled={isUpdating}>
-                         <Settings size={18} /> Начать работу
-                       </button>
-                     )}
-                     {(ticket.status === "IN_WORK" || ticket.status === "ENROUTE") && (
-                       <div style={{ width: '100%', marginTop: 8 }}>
-                         <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>Комментарий (необязательно):</label>
-                         <textarea 
-                           className={styles.textarea} 
-                           placeholder="Что сделано / причина паузы..."
-                           value={engineerComment}
-                           onChange={(e) => setEngineerComment(e.target.value)}
-                           style={{ width: '100%', marginBottom: 12 }}
-                         />
-                         
-                         <div className={styles.actionBtnRow}>
-                           <button className={styles.btnWarning} onClick={() => updateTicket({ status: "ON_HOLD", engineerComment })} disabled={isUpdating}>
-                             <Pause size={18} /> Пауза
-                           </button>
-                           {ticket.status === "IN_WORK" && (
-                             <button className={styles.btnPrimary} style={{ backgroundColor: "var(--status-success)" }} onClick={() => updateTicket({ status: "COMPLETED", engineerComment })} disabled={isUpdating}>
-                               <CheckCircle size={18} /> Выполнено
-                             </button>
-                           )}
-                         </div>
-                       </div>
-                     )}
-                     {ticket.status === "ON_HOLD" && (
-                       <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "IN_WORK" })} disabled={isUpdating}>
-                         <Play size={18} /> Возобновить
-                       </button>
-                     )}
-                     {ticket.status === "COMPLETED" && (
-                       <p style={{ color: 'var(--status-success)', fontSize: 13, fontWeight: 500 }}>Заявка успешно закрыта.</p>
-                     )}
-                   </>
-                 ) : (
-                   <p style={{ fontSize: 13, color: "var(--text-muted)", fontStyle: "italic" }}>
-                     {ticket.status === "CREATED" || ticket.status === "OPENED" 
-                       ? "Ожидайте назначения инженера или смены статуса диспетчером."
-                       : "Только назначенный инженер может менять статус."}
-                   </p>
-                 )}
-               </div>
+               {renderActions()}
             </div>
 
             <div className={styles.divider} />
@@ -327,10 +337,10 @@ export default function TicketDetail() {
              {/* Панель Оператора / Админа */}
             {((session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.role === 'OPERATOR') && (
               <div className={styles.controlGroup}>
-                <span className={styles.infoLabel} style={{ marginBottom: 12, display: "block", fontSize: 13, fontWeight: 700 }}>Панель управления</span>
+                <span className={styles.infoLabel} style={{ marginBottom: 8, display: "block", fontSize: 12 }}>Панель Оператора (Изменить)</span>
                 
-                <div style={{ marginBottom: 16 }}>
-                  <label style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>Приоритет:</label>
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Приоритет:</label>
                   <select 
                     className={styles.select} 
                     value={ticket.priority || ""} 
@@ -343,86 +353,29 @@ export default function TicketDetail() {
                   </select>
                 </div>
 
-                <div style={{ marginBottom: 16 }}>
-                  <label style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>Инженер:</label>
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Назначить инженера:</label>
                   <select 
                     className={styles.select} 
                     value={ticket.engineerId || ""} 
                     onChange={(e) => updateTicket({ engineerId: e.target.value, status: e.target.value ? "ASSIGNED" : "OPENED" })}
                     disabled={isUpdating}
                   >
-                    <option value="">-- Не назначен --</option>
+                    <option value="">-- Выбрать инженера --</option>
                     {engineers.map(eng => (
                       <option key={eng.id} value={eng.id}>{eng.name}</option>
                     ))}
                   </select>
                 </div>
 
-                <div className={styles.divider} style={{ margin: "16px 0" }} />
-
-                {ticket.status !== 'COMPLETED' && ticket.status !== 'CANCELED' && (
-                  <>
-                    {!showCloseForm ? (
-                      <button 
-                        className={styles.btnPrimary} 
-                        style={{ width: "100%", backgroundColor: "var(--status-success)", marginBottom: 12 }}
-                        onClick={() => setShowCloseForm(true)}
-                        disabled={isUpdating}
-                      >
-                        <CheckCircle size={18} /> Завершить заявку
-                      </button>
-                    ) : (
-                      <div className="animate-fade-in" style={{ background: "rgba(16, 185, 129, 0.05)", padding: 12, borderRadius: 8, border: "1px solid rgba(16, 185, 129, 0.2)", marginBottom: 12 }}>
-                        <label style={{ fontSize: 12, fontWeight: 600, color: "var(--status-success)", display: "block", marginBottom: 8 }}>Описание проделанной работы:</label>
-                        <textarea 
-                          className={styles.textarea}
-                          placeholder="Что было сделано..."
-                          value={operatorComment}
-                          onChange={(e) => setOperatorComment(e.target.value)}
-                          style={{ width: "100%", marginBottom: 12, minHeight: 80 }}
-                        />
-                        <div style={{ display: "flex", gap: 8 }}>
-                          <button 
-                            className={styles.btnPrimary}
-                            style={{ flex: 1, backgroundColor: "var(--status-success)" }}
-                            onClick={() => updateTicket({ status: "COMPLETED", operatorComment })}
-                            disabled={isUpdating || !operatorComment.trim()}
-                          >
-                            Подтвердить
-                          </button>
-                          <button 
-                            className={styles.btnSecondary}
-                            style={{ flex: 1 }}
-                            onClick={() => setShowCloseForm(false)}
-                            disabled={isUpdating}
-                          >
-                            Отмена
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    <button 
-                      className={styles.btnDanger} 
-                      style={{ width: "100%" }}
-                      onClick={() => {
-                        if (confirm("Вы уверены, что хотите отменить эту заявку?")) {
-                          updateTicket({ status: "CANCELED" });
-                        }
-                      }}
-                      disabled={isUpdating}
-                    >
-                      <XCircle size={18} /> Отменить заявку
-                    </button>
-                  </>
-                )}
-                
-                {ticket.status === 'COMPLETED' && ticket.operatorComment && (
-                  <div style={{ marginTop: 12, padding: 12, background: "var(--bg-secondary)", borderRadius: 8 }}>
-                    <span style={{ fontSize: 12, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Результат работы (Оператор):</span>
-                    <p style={{ fontSize: 14, color: "var(--text-primary)" }}>{ticket.operatorComment}</p>
-                  </div>
-                )}
+                <button 
+                  className={styles.btnDanger} 
+                  style={{ width: "100%", marginTop: "12px" }}
+                  onClick={() => updateTicket({ status: "CANCELED" })}
+                  disabled={isUpdating || ticket.status === "CANCELED"}
+                >
+                  <XCircle size={18} /> Отменить заявку
+                </button>
               </div>
             )}
           </aside>

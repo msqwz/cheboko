@@ -1,0 +1,439 @@
+.header {
+  margin-bottom: 24px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.ticketId {
+  font-family: var(--font-mono, monospace);
+  color: var(--text-muted);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.ticketTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Three Column Grid for Content */
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cards specific to Ticket Detail */
+.sectionBlock {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sectionHeader {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 20px 0;
+}
+
+/* Info Grid inside sections */
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoLabel {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.infoValue {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Photo Gallery */
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.photoThumbnail {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: var(--bg-hover);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.photoThumbnail:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Status Controls (Sidebar) */
+.statusBadgeLg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Operator / Engineer Controls */
+.controlGroup {
+  margin-bottom: 20px;
+}
+
+.select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  min-height: 100px;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+
+/* Action Buttons */
+.actionBtnRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btnPrimary {
+  background: var(--accent-primary);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px var(--accent-glow);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btnPrimary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.btnWarning {
+  background: var(--status-medium);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.btnDanger {
+  background: transparent;
+  border: 1px solid var(--status-high);
+  color: var(--status-high);
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .header {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  
+  .ticketId {
+    font-size: 16px;
+    order: -1;
+    color: var(--accent-primary);
+    background: var(--bg-primary);
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+  }
+
+  .ticketTitle {
+    font-size: 20px;
+    width: 100%;
+    word-break: break-word;
+    line-height: 1.3;
+  }
+  
+  .metaRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .metaItem {
+    width: 100%;
+    word-break: break-word;
+  }
+  
+  .sectionBlock {
+    padding: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .infoValue {
+    word-break: break-word;
+  }
+
+  .photoGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .statusBadgeLg {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .actionBtnRow {
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 8px;
+    padding: 4px 0 12px 0;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .btnPrimary, .btnWarning, .btnDanger {
+    padding: 10px 16px;
+    font-size: 13px;
+    width: auto;
+    min-width: fit-content;
+    border-radius: var(--radius-md);
+  }
+}
+
+.mobileStatusHeader {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileStatusHeader {
+    display: block;
+    margin-bottom: 16px;
+  }
+  
+  .desktopSidebarActions {
+    display: none;
+  }
+}
+
+/* History Timeline */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: 12px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border-color);
+  opacity: 0.5;
+}
+
+.timelineItem {
+  position: relative;
+  padding-left: 24px;
+  padding-bottom: 24px;
+}
+
+.timelineItem:last-child {
+  padding-bottom: 0;
+}
+
+.timelineDot {
+  position: absolute;
+  left: -2px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 2px solid var(--accent-primary);
+  z-index: 1;
+}
+
+.timelineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.timelineUser {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.timelineDate {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.timelineBody {
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.historyAction {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.historyValue {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.newValue {
+  color: var(--status-success);
+}
+
+.historyComment {
+  font-style: italic;
+  color: var(--text-primary);
+}
+
+.detailContainer {
+  padding-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+  .detailContainer {
+    display: flex;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,383 @@
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.headerActions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.filtersContainer {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  background: var(--bg-secondary);
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.filterLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.select, .input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.select:focus, .input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* Tabs */
+.tabsContainer {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 24px;
+  overflow-x: auto;
+  -ms-overflow-style: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tabActive {
+  color: var(--accent-primary);
+  border-bottom-color: var(--accent-primary);
+}
+
+.actionBtn {
+  color: var(--text-muted);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+  background-color: var(--bg-hover);
+  color: var(--accent-primary);
+}
+
+.filterMainRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: flex-end;
+}
+
+.filterSecondaryRow {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  align-items: flex-end;
+  transition: all 0.3s ease;
+}
+
+.filterToggleBtn {
+  padding: 10px 16px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.filterToggleBtn:hover {
+  background: var(--border-color);
+}
+
+.actionWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownMenu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-glass);
+  min-width: 180px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+  animation: dropdownFade 0.2s ease-out;
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.dropdownItem:last-child {
+  border-bottom: none;
+}
+
+.dropdownItem:hover {
+  background-color: var(--bg-hover);
+}
+
+.successItem {
+  color: var(--status-success) !important;
+}
+
+.ticketsWrapper {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important; /* Allow dropdowns to show outside the container */
+}
+
+.desktopOnly {
+  display: block;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+/* Media Queries AT THE END for proper overrides */
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .headerActions {
+    display: flex;
+    flex-direction: row; /* Horizontal row */
+    gap: 8px;
+    width: 100%;
+  }
+
+  .headerActions > * {
+    flex: 1; /* Both take equal space */
+    justify-content: center;
+  }
+  
+  .filtersContainer {
+    padding: 12px;
+    gap: 12px;
+    margin-bottom: 24px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filterSecondaryRow {
+    overflow-x: auto !important;
+    gap: 12px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-glass);
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  
+  .filterGroup {
+    min-width: 160px;
+    flex: 0 0 auto;
+  }
+
+  .mobileHidden {
+    display: none !important;
+  }
+  
+  .tabsContainer {
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    padding-bottom: 4px;
+    margin-bottom: 16px;
+    -webkit-overflow-scrolling: touch;
+    gap: 0;
+    flex-wrap: nowrap;
+    display: flex !important;
+  }
+
+  .tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    flex: 0 0 auto;
+  }
+
+  .mobileCard {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    margin-bottom: 16px;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .mobileCard:active {
+    transform: scale(0.98);
+  }
+
+  .cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(var(--bg-hover-rgb), 0.3);
+    border-bottom: 1px solid var(--border-glass);
+  }
+
+  .cardNumber {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .cardAction {
+    position: relative;
+    margin-left: 8px;
+  }
+
+  .cardBodyLink {
+    padding: 16px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .cardTitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .cardMainInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .infoLine {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .infoIcon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-glass);
+  }
+
+  .cardDate {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .cardPriority {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+  }
+
+  .desktopOnly {
+    display: none !important;
+  }
+  
+  .mobileOnly {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ticketsWrapper {
+     background: transparent !important;
+     border: none !important;
+     box-shadow: none !important;
+  }
+}

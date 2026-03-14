@@ -4,7 +4,26 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "@/lib/useTheme";
-import { Coffee, Ticket as TicketIcon, Users, Settings, Bell, LogOut, Moon, Sun, Map, BarChart2, Wrench } from "lucide-react";
+import { 
+  LayoutDashboard,
+  Ticket, 
+  MapPin, 
+  Coffee, 
+  Building2, 
+  Users, 
+  Bell, 
+  Settings, 
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical,
+  BarChart2,
+  TicketIcon,
+  Map,
+  Wrench,
+  Moon,
+  Sun
+} from "lucide-react";
 import styles from "./Sidebar.module.css";
 import clsx from "clsx";
 import { useState, useEffect } from "react";
@@ -24,19 +43,15 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
     { href: "/admin/settings", label: "Настройки", icon: Settings },
   ],
   OPERATOR: [
-    { href: "/operator", label: "Дашборд", icon: BarChart2 },
+    { href: "/operator", label: "Обзор", icon: LayoutDashboard },
     { href: "/operator/tickets", label: "Заявки", icon: TicketIcon },
-    { href: "/operator/map", label: "Карта", icon: Map },
+    { href: "/operator/map", label: "Карта", icon: MapPin },
     { href: "/operator/equipment", label: "Оборудование", icon: Coffee },
-    { href: "/operator/clients", label: "Клиенты", icon: Users },
-    { href: "/operator/team", label: "Сотрудники", icon: Wrench },
+    { href: "/operator/clients", label: "Клиенты", icon: Building2 },
+    { href: "/operator/team", label: "Команда", icon: Users },
     { href: "/operator/notifications", label: "Уведомления", icon: Bell },
   ],
   REGIONAL_MANAGER: [
-    { href: "/admin", label: "Дашборд", icon: BarChart2 },
-    { href: "/admin/tickets", label: "Заявки", icon: TicketIcon },
-    { href: "/admin/map", label: "Карта", icon: Map },
-    { href: "/admin/equipment", label: "Оборудование", icon: Coffee },
     { href: "/admin/analytics", label: "Аналитика", icon: BarChart2 },
     { href: "/admin/clients", label: "Клиенты", icon: Users },
     { href: "/admin/team", label: "Сотрудники", icon: Wrench },
@@ -49,17 +64,19 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
     { href: "/engineer/profile", label: "Профиль", icon: Users },
   ],
   CLIENT_NETWORK_HEAD: [
-    { href: "/tickets", label: "Заявки", icon: TicketIcon },
-    { href: "/map", label: "Карта", icon: Map },
-    { href: "/analytics", label: "Аналитика", icon: BarChart2 },
-    { href: "/clients", label: "Мои точки", icon: Users },
-    { href: "/notifications", label: "Уведомления", icon: Bell },
-    { href: "/profile", label: "Профиль", icon: Users },
+    { href: "/network", label: "Обзор", icon: LayoutDashboard },
+    { href: "/network/tickets", label: "Заявки", icon: TicketIcon },
+    { href: "/network/map", label: "Карта", icon: MapPin },
+    { href: "/network/analytics", label: "Аналитика", icon: BarChart2 },
+    { href: "/network/clients", label: "Мои точки", icon: Building2 },
+    { href: "/network/notifications", label: "Уведомления", icon: Bell },
+    { href: "/network/profile", label: "Профиль", icon: Users },
   ],
   CLIENT_POINT_MANAGER: [
-    { href: "/tickets", label: "Заявки", icon: TicketIcon },
-    { href: "/notifications", label: "Уведомления", icon: Bell },
-    { href: "/profile", label: "Профиль", icon: Users },
+    { href: "/point", label: "Обзор", icon: LayoutDashboard },
+    { href: "/point/tickets", label: "Заявки", icon: TicketIcon },
+    { href: "/point/notifications", label: "Уведомления", icon: Bell },
+    { href: "/point/profile", label: "Профиль", icon: Users },
   ],
   CLIENT_SPECIALIST: [
     { href: "/tickets", label: "Мои заявки", icon: TicketIcon },

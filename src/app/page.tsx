@@ -16,8 +16,18 @@ export default async function RootPage() {
     redirect("/engineer/tasks");
   }
 
-  // Клиент — на свои заявки
-  const clientRoles = ['CLIENT_MANAGER', 'CLIENT_NETWORK_HEAD', 'CLIENT_POINT_MANAGER', 'CLIENT_SPECIALIST'];
+  // Управляющий точкой — в свою зону
+  if (role === 'CLIENT_POINT_MANAGER') {
+    redirect("/point");
+  }
+
+  // Руководитель сети — в свою зону
+  if (role === 'CLIENT_NETWORK_HEAD') {
+    redirect("/network");
+  }
+
+  // Клиент и другие клиентские роли — на свои заявки
+  const clientRoles = ['CLIENT_MANAGER', 'CLIENT_SPECIALIST'];
   if (clientRoles.includes(role)) {
     redirect("/tickets");
   }
@@ -27,6 +37,11 @@ export default async function RootPage() {
     redirect("/operator");
   }
 
-  // По умолчанию (Админы, Менеджеры регионов) — на дашборд
+  // Менеджер региона — в свою зону
+  if (role === 'REGIONAL_MANAGER') {
+    redirect("/manager");
+  }
+
+  // По умолчанию (только Админы) — на дашборд
   redirect("/admin");
 }

@@ -70,20 +70,19 @@ const ALLOWED_STATUS_TRANSITIONS: Record<string, Record<string, string[]>> = {
     CLOSED: [],
 
   },
-  OPERATOR: {
-    CREATED: ["OPENED", "CANCELED", "OPEN"],
-    OPENED: ["ASSIGNED", "CANCELED"],
-    OPEN: ["ASSIGNED", "CANCELED", "OPENED"],
-    ASSIGNED: ["ENROUTE", "OPENED", "CANCELED"],
-    ENROUTE: ["IN_WORK", "ASSIGNED"],
-    IN_WORK: ["ON_HOLD", "COMPLETED", "RESOLVED"],
-    ON_HOLD: ["IN_WORK"],
-    COMPLETED: [],
-    RESOLVED: [],
-    CANCELED: [],
-    CLOSED: [],
-
-  },
+    OPERATOR: {
+      CREATED: ["OPENED", "CANCELED", "OPEN"],
+      OPENED: ["ASSIGNED", "CANCELED", "COMPLETED"],
+      OPEN: ["ASSIGNED", "CANCELED", "OPENED", "COMPLETED"],
+      ASSIGNED: ["ENROUTE", "OPENED", "CANCELED", "COMPLETED"],
+      ENROUTE: ["IN_WORK", "ASSIGNED", "COMPLETED"],
+      IN_WORK: ["ON_HOLD", "COMPLETED", "RESOLVED"],
+      ON_HOLD: ["IN_WORK", "COMPLETED"],
+      COMPLETED: [],
+      RESOLVED: [],
+      CANCELED: [],
+      CLOSED: [],
+    },
   ENGINEER: {
     ASSIGNED: ["ENROUTE"],
     ENROUTE: ["IN_WORK"],
@@ -256,6 +255,10 @@ export async function PATCH(
 
     if (data.engineerComment && data.engineerComment !== ticket.engineerComment) {
       await recordTicketHistory(id, userId, HistoryActions.COMMENT_ADDED, undefined, data.engineerComment);
+    }
+
+    if (data.operatorComment && data.operatorComment !== ticket.operatorComment) {
+      await recordTicketHistory(id, userId, HistoryActions.COMMENT_ADDED, undefined, data.operatorComment);
     }
 
 

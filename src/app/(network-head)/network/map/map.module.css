@@ -1,0 +1,162 @@
+.mapContainer {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 120px);
+  background-color: #1a1b1e;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.mapContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.marker {
+  position: absolute;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.marker:hover {
+  transform: scale(1.1);
+  z-index: 20;
+}
+
+.engineerMarker {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: var(--accent-primary);
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.locationMarker {
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background-color: var(--status-success);
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 10px;
+  background: rgba(23, 23, 26, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.marker:hover .tooltip {
+  opacity: 1;
+}
+
+.sidebar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  background: rgba(23, 23, 26, 0.85);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 100;
+}
+
+.sidebarTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.listItem:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.region {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.status {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.online {
+  background-color: var(--status-success);
+  box-shadow: 0 0 5px var(--status-success);
+}
