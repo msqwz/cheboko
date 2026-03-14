@@ -5,6 +5,13 @@
   margin-bottom: 24px;
 }
 
+.headerActions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
 .filtersContainer {
   display: flex;
   gap: 16px;
