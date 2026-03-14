@@ -44,35 +44,32 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
   ],
   ENGINEER: [
     { href: "/engineer/tasks", label: "Мои заявки", icon: TicketIcon },
-    { href: "/admin/map", label: "Карта", icon: Map },
-    { href: "/admin/notifications", label: "Уведомления", icon: Bell },
-    { href: "/admin/profile", label: "Профиль", icon: Users },
+    { href: "/engineer/map", label: "Карта", icon: Map },
+    { href: "/engineer/notifications", label: "Уведомления", icon: Bell },
+    { href: "/engineer/profile", label: "Профиль", icon: Users },
   ],
   CLIENT_NETWORK_HEAD: [
     { href: "/tickets", label: "Заявки", icon: TicketIcon },
-    { href: "/admin/equipment", label: "Оборудование", icon: Coffee },
-    { href: "/admin/analytics", label: "Аналитика", icon: BarChart2 },
-    { href: "/admin/clients", label: "Мои точки", icon: Users },
-    { href: "/admin/notifications", label: "Уведомления", icon: Bell },
-    { href: "/admin/profile", label: "Профиль", icon: Users },
+    { href: "/map", label: "Карта", icon: Map },
+    { href: "/analytics", label: "Аналитика", icon: BarChart2 },
+    { href: "/clients", label: "Мои точки", icon: Users },
+    { href: "/notifications", label: "Уведомления", icon: Bell },
+    { href: "/profile", label: "Профиль", icon: Users },
   ],
   CLIENT_POINT_MANAGER: [
     { href: "/tickets", label: "Заявки", icon: TicketIcon },
-    { href: "/admin/equipment", label: "Оборудование", icon: Coffee },
-    { href: "/admin/analytics", label: "Аналитика", icon: BarChart2 },
-    { href: "/admin/notifications", label: "Уведомления", icon: Bell },
-    { href: "/admin/profile", label: "Профиль", icon: Users },
+    { href: "/notifications", label: "Уведомления", icon: Bell },
+    { href: "/profile", label: "Профиль", icon: Users },
   ],
   CLIENT_SPECIALIST: [
     { href: "/tickets", label: "Мои заявки", icon: TicketIcon },
-    { href: "/admin/notifications", label: "Уведомления", icon: Bell },
-    { href: "/admin/profile", label: "Профиль", icon: Users },
+    { href: "/notifications", label: "Уведомления", icon: Bell },
+    { href: "/profile", label: "Профиль", icon: Users },
   ],
   CLIENT_MANAGER: [
     { href: "/tickets", label: "Заявки", icon: TicketIcon },
-    { href: "/admin/equipment", label: "Оборудование", icon: Coffee },
-    { href: "/admin/notifications", label: "Уведомления", icon: Bell },
-    { href: "/admin/profile", label: "Профиль", icon: Users },
+    { href: "/notifications", label: "Уведомления", icon: Bell },
+    { href: "/profile", label: "Профиль", icon: Users },
   ],
 };
 
@@ -140,7 +137,7 @@ export default function Sidebar() {
         {navItems.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(`${item.href}/`));
           const Icon = item.icon;
-          const showBadge = item.href === "/notifications" && unreadCount > 0;
+          const showBadge = item.href.includes("notifications") && unreadCount > 0;
 
           return (
             <Link
@@ -180,7 +177,7 @@ export default function Sidebar() {
         <div className={styles.avatar}>
           {session?.user?.name ? session.user.name.substring(0, 1) : <Users size={20} color="var(--text-muted)" />}
         </div>
-        <Link href="/profile" className={styles.userInfo} style={{ textDecoration: "none", flex: 1 }}>
+        <Link href="/admin/profile" className={styles.userInfo} style={{ textDecoration: "none", flex: 1 }}>
           <span className={styles.userName}>{session?.user?.name || "Пользователь"}</span>
           <span className={styles.userRole}>{getRoleText(role || "")}</span>
         </Link>

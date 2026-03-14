@@ -8,6 +8,10 @@
   padding-bottom: max(8px, env(safe-area-inset-bottom));
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .navList {

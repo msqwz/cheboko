@@ -6,12 +6,14 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="client-layout" style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Для клиента тоже можно использовать Sidebar, но с ограниченными пунктами */}
-      <Sidebar /> 
-      <main className="main-content" style={{ flex: 1, padding: '20px' }}>
-        {children}
+    <div className="app-layout">
+      <Sidebar />
+      <main className="main-content">
+        <div className="page-container" style={{ paddingBottom: 'calc(var(--bottom-nav-height) + 20px)' }}>
+          {children}
+        </div>
       </main>
+      <BottomNav />
     </div>
   );
 }

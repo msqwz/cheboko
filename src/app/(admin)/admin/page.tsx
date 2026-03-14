@@ -136,7 +136,7 @@ export default async function Dashboard() {
           <Link href="/admin/tickets" className={styles.btnSecondary}>
             Все заявки
           </Link>
-          <Link href="/tickets/new" className={styles.btnPrimary}>
+          <Link href="/admin/tickets/new" className={styles.btnPrimary}>
             <Plus size={18} /> Создать заявку
           </Link>
         </div>

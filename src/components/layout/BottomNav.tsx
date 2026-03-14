@@ -27,15 +27,15 @@ export default function BottomNav() {
   // Меню для ENGINEER (PWA)
   const engineerNavItems = [
     { href: "/engineer/tasks", label: "Задачи", icon: ClipboardList },
-    { href: "/admin/notifications", label: "Оповещения", icon: Bell },
-    { href: "/admin/profile", label: "Профиль", icon: User },
+    { href: "/engineer/notifications", label: "Оповещения", icon: Bell },
+    { href: "/engineer/profile", label: "Профиль", icon: User },
   ];
 
   // Меню для CLIENT_* (клиент)
   const clientNavItems = [
     { href: "/tickets", label: "Активные", icon: ListTodo },
     { href: "/tickets/new", label: "Создать", icon: PlusCircle },
-    { href: "/admin/profile", label: "Профиль", icon: User },
+    { href: "/profile", label: "Профиль", icon: User },
   ];
 
   // Выбор меню
