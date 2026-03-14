@@ -303,137 +303,53 @@ export default function TicketsPage() {
                   <td style={{ color: !ticket.engineer ? 'var(--text-muted)' : 'inherit', fontStyle: !ticket.engineer ? 'italic' : 'normal' }}>
                     {ticket.engineer?.name || "—"}
                   </td>
-                  <td>
+                  <td className={styles.actionWrapper}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setOpenMenuId(openMenuId === ticket.id ? null : ticket.id);
                       }}
                       className={styles.actionBtn}
-                      style={{ position: "relative" }}
                     >
                       <MoreVertical size={18} />
-                      {openMenuId === ticket.id && (
-                        <span style={{
-                          position: "absolute",
-                          right: 0,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          width: 8,
-                          height: 8,
-                          borderRadius: "50%",
-                          background: "var(--accent-primary)",
-                        }} />
-                      )}
                     </button>
-                  </td>
-                </tr>
-              ))}
-              {!isLoading && tickets.length === 0 && (
-                <tr>
-                  <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>
-                    Заявок в этой категории пока нет.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                    
+                    {openMenuId === ticket.id && (
+                      <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
+                        <Link href={`/tickets/${ticket.id}`} className={styles.dropdownItem}>
+                          <Eye size={16} /> Просмотр
+                        </Link>
+                        
+                        <button
+                          className={clsx(styles.dropdownItem, styles.successItem)}
+                          onClick={(e) => {
+                            if (ticket.status !== "COMPLETED") handleQuickComplete(ticket.id, e);
+                          }}
+                        >
+                          <CheckCircle size={16} /> Завершить
+                        </button>
 
-      {/* Выпадающее меню действий */}
-      {openMenuId && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
-          }}
-          onClick={() => setOpenMenuId(null)}
-        >
-          <div
-            style={{
-              position: "absolute",
-              right: "10%",
-              top: "100px",
-              background: "var(--bg-secondary)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "var(--radius-md)",
-              boxShadow: "var(--shadow-glass)",
-              minWidth: "180px",
-              zIndex: 10000,
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Link
-              href={`/tickets/${openMenuId}`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "12px 16px",
-                color: "var(--text-primary)",
-                textDecoration: "none",
-                borderBottom: "1px solid var(--border-color)",
-              }}
-            >
-              <Eye size={16} /> Просмотр
-            </Link>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                const ticket = tickets.find(t => t.id === openMenuId);
-                if (ticket?.status !== "COMPLETED") handleQuickComplete(openMenuId, e);
-              }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "12px 16px",
-                width: "100%",
-                background: "none",
-                border: "none",
-                borderBottom: "1px solid var(--border-color)",
-                cursor: "pointer",
-                color: "var(--status-success)",
-                textAlign: "left",
-              }}
-            >
-              <CheckCircle size={16} /> Завершить
-            </button>
-            {/* Only Admin, RM, Operator, or Client can Cancel. Engineer cannot. */}
-            {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER' || userRole === 'OPERATOR' || userRole.startsWith('CLIENT_')) && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const ticket = tickets.find(t => t.id === openMenuId);
-                  if (ticket?.status !== "CANCELED" && ticket?.status !== "COMPLETED") handleQuickCancel(openMenuId, e);
-                }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "12px 16px",
-                  width: "100%",
-                  background: "none",
-                  border: "none",
-                  borderBottom: "1px solid var(--border-color)",
-                  cursor: "pointer",
-                  color: "var(--status-high)",
-                  textAlign: "left",
-                }}
-              >
-                <XCircle size={16} /> Отменить
-              </button>
-            )}
-            
-            {/* Only Admin or Regional Manager can Delete */}
-            {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER') && (
-              <button
-                onClick={(e) => handleDeleteTicket(openMenuId, e)}
+                        {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER' || userRole === 'OPERATOR' || (userRole && userRole.startsWith('CLIENT_'))) && (
+                          <button
+                            className={clsx(styles.dropdownItem, styles.dangerItem)}
+                            onClick={(e) => {
+                              if (ticket.status !== "CANCELED" && ticket.status !== "COMPLETED") handleQuickCancel(ticket.id, e);
+                            }}
+                          >
+                            <XCircle size={16} /> Отменить
+                          </button>
+                        )}
+                        
+                        {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER') && (
+                          <button
+                            className={clsx(styles.dropdownItem, styles.dangerItem)}
+                            onClick={(e) => handleDeleteTicket(ticket.id, e)}
+                          >
+                            <Trash2 size={16} /> Удалить
+        </div>
+  );
+}
+ onClick={(e) => handleDeleteTicket(openMenuId, e)}
                 style={{
                   display: "flex",
                   alignItems: "center",

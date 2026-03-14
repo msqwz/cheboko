@@ -13,10 +13,11 @@ export async function GET() {
 
     const { data: allLocations, error } = await supabase
       .from('Location')
-      .select('*, legalName:name');
+      .select('*, legalName:name, equipments:Equipment(*)');
 
     if (error) throw error;
 
+    console.log(`[LOCATIONS] Fetched ${allLocations?.length} locations with equipment`);
     return NextResponse.json(allLocations);
   } catch (error: any) {
     console.error("Error fetching locations:", error);

@@ -133,15 +133,15 @@
 }
 
 .logoIcon {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .logoText {
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 700;
   letter-spacing: -1px;
   color: var(--text-primary);

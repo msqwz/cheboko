@@ -81,7 +81,7 @@ export default function LoginPage() {
               но в MVP выводим всегда по центру формы для красоты) */}
           <div className={styles.logoContainer}>
              <div className={styles.logoIcon}>
-               <Image src="/logo.png" alt="Logo" width={40} height={40} />
+                <Image src="/logo.png" alt="Logo" width={60} height={60} />
              </div>
              <span className={styles.logoText}>Чебоко</span>
           </div>
