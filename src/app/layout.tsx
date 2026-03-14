@@ -13,6 +13,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Чебоко - Управление Заявками",
   description: "B2B Сервис для обслуживания кофейных аппаратов",
+  manifest: "/manifest.json",
+  themeColor: "#b41e15",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Чебоко",
+  },
 };
 
 export default function RootLayout({
