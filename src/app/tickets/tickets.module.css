@@ -21,6 +21,7 @@
   flex-direction: column;
   gap: 8px;
   flex: 1;
+  min-width: 200px;
 }
 
 .filterLabel {
@@ -115,30 +116,12 @@
     flex-direction: column;
   }
 
-  .filterMainRow {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .filterToggleBtn {
-    padding: 10px 16px;
-    background: var(--bg-hover);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
-    white-space: nowrap;
-  }
-
   .filterSecondaryRow {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     padding-top: 12px;
     border-top: 1px solid var(--border-glass);
-    transition: all 0.3s ease;
   }
 
   .mobileHidden {
@@ -165,6 +148,37 @@
      border: none !important;
      box-shadow: none !important;
   }
+}
+
+.filterMainRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: flex-end;
+}
+
+.filterSecondaryRow {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  align-items: flex-end;
+  transition: all 0.3s ease;
+}
+
+.filterToggleBtn {
+  padding: 10px 16px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.filterToggleBtn:hover {
+  background: var(--border-color);
 }
 
 /* Стили для новых мобильных карточек */

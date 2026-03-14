@@ -383,3 +383,12 @@
   color: var(--text-primary);
 }
 
+.detailContainer {
+  padding-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+  .detailContainer {
+    padding-bottom: 100px !important;
+  }
+}

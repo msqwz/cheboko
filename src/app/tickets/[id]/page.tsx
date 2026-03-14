@@ -128,7 +128,7 @@ export default function TicketDetail() {
   if (!ticket) return <div className="page-container">Заявка не найдена.</div>;
 
   return (
-    <div className={clsx("page-container", "animate-fade-in")}>
+    <div className={clsx("page-container", styles.detailContainer, "animate-fade-in")}>
       <button 
         onClick={() => router.back()} 
         style={{ color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "8px", marginBottom: "24px", fontSize: "14px", fontWeight: 500, background: "none", border: "none", cursor: "pointer" }}

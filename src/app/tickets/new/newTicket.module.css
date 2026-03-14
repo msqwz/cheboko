@@ -169,6 +169,10 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding-bottom: 100px !important;
+  }
+  
   .grid2 {
     grid-template-columns: 1fr;
   }
