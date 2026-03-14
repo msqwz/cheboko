@@ -118,15 +118,11 @@
   }
 
   /* Переработка таблицы в карточки */
-  :global(.app-layout) :global(.page-container) :global(.page-styles_card__xxxx) { /* Fallback for generic card styling */
-     background: transparent;
-     border: none;
-     box-shadow: none;
+  .ticketsWrapper {
+     background: transparent !important;
+     border: none !important;
+     box-shadow: none !important;
   }
-
-  /* Мы не можем легко перебить глобальные стили таблицы через модульный CSS без селекторов, 
-     поэтому используем существующие классы или специфичные обертки. 
-     В TicketsPage мы используем pageStyles.table */
 }
 
 /* Стили для новых мобильных карточек */
