@@ -120,9 +120,9 @@ export default function TicketsPage() {
         params.append('status', statusFilter !== 'all' ? statusFilter : activeTab);
         if (priorityFilter !== 'all') params.append('priority', priorityFilter);
         if (searchQuery) params.append('search', searchQuery);
-        if (userRole === 'CLIENT_MANAGER') {
-          params.append('creatorId', userId || '');
-        }
+        
+        // Принудительная фильтрация для клиента
+        params.append('creatorId', userId || '');
 
         const res = await fetch(`/api/tickets?${params.toString()}`);
         const data = await res.json();
@@ -192,12 +192,8 @@ export default function TicketsPage() {
           <p className={pageStyles.subtitle}>Полный список обращений на ремонт и ТО</p>
         </div>
         <div className={styles.headerActions}>
-          <button onClick={handleExportCSV} className={pageStyles.btnSecondary}>
-            <span className={styles.desktopOnly}>Экспорт CSV</span>
-            <span className={styles.mobileOnly}>Экспорт</span>
-          </button>
           <Link href="/tickets/new" className={pageStyles.btnPrimary}>
-            <Plus size={18} /> <span className={styles.desktopOnly}>Создать заявку</span><span className={styles.mobileOnly}>Создать</span>
+            <Plus size={18} /> <span>Создать заявку</span>
           </Link>
         </div>
       </header>
@@ -341,25 +337,14 @@ export default function TicketsPage() {
                           <CheckCircle size={16} /> Завершить
                         </button>
 
-                        {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER' || userRole === 'OPERATOR' || (userRole && userRole.startsWith('CLIENT_'))) && (
-                          <button
-                            className={clsx(styles.dropdownItem, styles.dangerItem)}
-                            onClick={(e) => {
-                              if (ticket.status !== "CANCELED" && ticket.status !== "COMPLETED") handleQuickCancel(ticket.id, e);
-                            }}
-                          >
-                            <XCircle size={16} /> Отменить
-                          </button>
-                        )}
-
-                        {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER') && (
-                          <button
-                            className={clsx(styles.dropdownItem, styles.dangerItem)}
-                            onClick={(e) => handleDeleteTicket(ticket.id, e)}
-                          >
-                            <Trash2 size={16} /> Удалить
-                          </button>
-                        )}
+                        <button
+                          className={clsx(styles.dropdownItem, styles.dangerItem)}
+                          onClick={(e) => {
+                            if (ticket.status !== "CANCELED" && ticket.status !== "COMPLETED") handleQuickCancel(ticket.id, e);
+                          }}
+                        >
+                          <XCircle size={16} /> Отменить
+                        </button>
                       </div>
                     )}
                   </td>

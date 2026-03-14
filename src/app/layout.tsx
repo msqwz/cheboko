@@ -34,13 +34,7 @@ export default function RootLayout({
     <html lang="ru">
       <body className={inter.variable}>
         <Providers>
-          <div className="app-layout">
-            <Sidebar />
-            <main className="main-content">
-              {children}
-            </main>
-            <BottomNav />
-          </div>
+          {children}
         </Providers>
       </body>
     </html>

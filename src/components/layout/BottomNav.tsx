@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListTodo, PlusCircle, User } from "lucide-react";
+import { LayoutDashboard, ListTodo, PlusCircle, User, ClipboardList, Bell } from "lucide-react";
 import styles from "./BottomNav.module.css";
 import clsx from "clsx";
 
@@ -18,34 +18,35 @@ export default function BottomNav() {
     pathname === "/login" || 
     pathname === "/register" || 
     pathname === "/forgot-password" || 
-    pathname.startsWith("/reset-password")
+    pathname.startsWith("/reset-password") ||
+    pathname.includes("/admin")
   ) {
     return null;
   }
 
-  // Меню для CLIENT_MANAGER (клиент) - без Главной
+  // Меню для ENGINEER (PWA)
+  const engineerNavItems = [
+    { href: "/engineer/tasks", label: "Задачи", icon: ClipboardList },
+    { href: "/admin/notifications", label: "Оповещения", icon: Bell },
+    { href: "/admin/profile", label: "Профиль", icon: User },
+  ];
+
+  // Меню для CLIENT_* (клиент)
   const clientNavItems = [
-    { href: "/tickets", label: "Заявки", icon: ListTodo },
+    { href: "/tickets", label: "Активные", icon: ListTodo },
     { href: "/tickets/new", label: "Создать", icon: PlusCircle },
-    { href: "/profile", label: "Профиль", icon: User },
+    { href: "/admin/profile", label: "Профиль", icon: User },
   ];
 
-  // Полное меню для остальных ролей
-  const fullNavItems = [
-    { href: "/", label: "Главная", icon: LayoutDashboard },
-    { href: "/tickets", label: "Заявки", icon: ListTodo },
-    { href: "/tickets/new", label: "Создать", icon: PlusCircle },
-    { href: "/profile", label: "Профиль", icon: User },
-  ];
-
-  const NAV_ITEMS = role === 'CLIENT_MANAGER' ? clientNavItems : fullNavItems;
+  // Выбор меню
+  const NAV_ITEMS = role === 'ENGINEER' ? engineerNavItems : clientNavItems;
 
   return (
     <nav className={styles.bottomNav}>
       <div className={styles.navList}>
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
-          const Icon = item.icon;
+          const Icon = item.icon as any;
           
           return (
             <Link 
