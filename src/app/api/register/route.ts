@@ -47,18 +47,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "E-mail уже используется, войдите или восстановите доступ" }, { status: 400 });
     }
 
-    // Role safety check
+    // --- НОВЫЙ ПОЛЬЗОВАТЕЛЬ ---
+    // 1. Проверяем наличие всех обязательных полей
+    if (!name || !phone || !role || !password) {
+      console.log("[REGISTER] Missing fields for new user");
+      return NextResponse.json({ error: "Для регистрации заполните все поля" }, { status: 400 });
+    }
+
+    // 2. Валидация роли
     const allowedRoles = ["OPERATOR", "REGIONAL_MANAGER", "CLIENT_NETWORK_HEAD"];
     if (!allowedRoles.includes(role)) {
       return NextResponse.json({ error: "Недопустимая роль для регистрации" }, { status: 400 });
     }
 
-    // Email format check
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: "Введите корректный e-mail" }, { status: 400 });
-    }
-
+    // 3. Валидация пароля
     const passwordCheck = validatePassword(password);
     if (!passwordCheck.isValid) {
       console.log("[REGISTER] Password validation failed:", passwordCheck.message);
@@ -66,10 +68,6 @@ export async function POST(request: Request) {
     }
 
     // 3. Hash password
-    if (!name || !phone || !role || !password) {
-      return NextResponse.json({ error: "Для регистрации нового пользователя заполните все поля" }, { status: 400 });
-    }
-
     console.log("[REGISTER] Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
 
