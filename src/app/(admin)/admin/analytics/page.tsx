@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import pageStyles from "@/app/page.module.css";
+import pageStyles from "@/app/(admin)/admin/page.module.css";
 import clsx from "clsx";
 
 type AnalyticsData = {

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Plus, Search, MoreVertical, Eye, Trash2, CheckCircle, XCircle } from "lucide-react";
 import { supabasePublic } from "@/lib/supabase";
 import styles from "./tickets.module.css";
-import pageStyles from "@/app/page.module.css";
+import pageStyles from "@/app/(admin)/admin/page.module.css";
 import clsx from "clsx";
 
 const getStatusBadge = (status: string) => {

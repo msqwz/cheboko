@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import pageStyles from "@/app/page.module.css";
+import pageStyles from "@/app/(admin)/admin/page.module.css";
 import { Plus, Search, MapPin, Coffee, MoreVertical, Edit2, Loader2, X, Trash2 } from "lucide-react";
 
 import clsx from "clsx";

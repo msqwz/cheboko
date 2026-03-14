@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import pageStyles from "@/app/page.module.css";
+import pageStyles from "@/app/(admin)/admin/page.module.css";
 import { Plus, Search, Trash2, Edit2, Loader2, X, Save, Wrench } from "lucide-react";
 import clsx from "clsx";
 import EquipmentQR from "@/components/EquipmentQR";

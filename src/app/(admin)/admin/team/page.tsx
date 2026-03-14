@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import pageStyles from "@/app/page.module.css";
+import pageStyles from "@/app/(admin)/admin/page.module.css";
 import { Plus, Search, Shield, Wrench, User, Mail, Phone, MoreVertical, Loader2, X, Edit2, Trash2 } from "lucide-react";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
