@@ -39,6 +39,7 @@ function RegisterContent() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [debugCode, setDebugCode] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -96,9 +97,38 @@ function RegisterContent() {
         throw new Error(data.error || "Ошибка при регистрации");
       }
 
+      if (data.debugCode) {
+        setDebugCode(data.debugCode);
+      }
       setStep("verify");
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name || "TEST",
+          email: formData.email,
+          phone: formData.phone || "79000000000",
+          role: formData.role || "OPERATOR",
+          password: formData.password || "Password123!",
+        }),
+      });
+      const data = await res.json();
+      if (data.debugCode) {
+        setDebugCode(data.debugCode);
+      }
+    } catch (e) {
+      setError("Не удалось отправить код повторно");
     } finally {
       setIsLoading(false);
     }
@@ -343,6 +373,11 @@ function RegisterContent() {
                       required
                     />
                   </div>
+                  {debugCode && (
+                    <p style={{ marginTop: "8px", fontSize: "14px", color: "var(--primary)", textAlign: "center", fontWeight: "bold" }}>
+                      Временный код для теста: {debugCode}
+                    </p>
+                  )}
                 </div>
 
                 <button type="submit" className={styles.btnSubmit} disabled={isLoading || verificationCode.length !== 6} style={{ marginTop: "20px" }}>
@@ -354,7 +389,7 @@ function RegisterContent() {
               <div className={styles.bottomLink}>
                 Не получили код?
                 <button 
-                  onClick={() => alert(`Код для ${formData.email} доступен в логах сервера`)} 
+                  onClick={handleResend}
                   style={{ background: "none", border: "none", color: "var(--primary)", cursor: "pointer", padding: 0, marginLeft: "5px", fontSize: "inherit", fontWeight: "inherit" }}
                 >
                   Отправить еще раз

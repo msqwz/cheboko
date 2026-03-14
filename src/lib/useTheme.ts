@@ -10,9 +10,10 @@ export function useTheme() {
     if (savedTheme) {
       setTheme(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      // По умолчанию всегда светлая, игнорируем системную темную тему
+      setTheme('light');
+      document.documentElement.setAttribute('data-theme', 'light');
     }
   }, []);
 

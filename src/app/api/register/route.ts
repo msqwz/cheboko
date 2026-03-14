@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     console.log("[REGISTER] Checking if user exists in Supabase...");
     const { data: existingUser, error: checkError } = await supabase
       .from('User')
-      .select('id')
+      .select('id, isVerified')
       .eq('email', email)
       .maybeSingle();
 
@@ -45,7 +45,23 @@ export async function POST(request: Request) {
     }
 
     if (existingUser) {
-      console.log("[REGISTER] User already exists:", email);
+      // ПРОВЕРКА: Если пользователь уже есть, но не верифицирован — генерируем новый код
+      if (!existingUser.isVerified) {
+        console.log("[REGISTER] User exists but not verified. Regenerating code...");
+        const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+        await supabase
+          .from('User')
+          .update({ verificationCode: newCode })
+          .eq('email', email);
+          
+        return NextResponse.json({ 
+          success: true, 
+          message: "Новый код подтверждения отправлен (временно возвращен в ответе)",
+          debugCode: newCode
+        });
+      }
+
+      console.log("[REGISTER] User already exists and verified:", email);
       return NextResponse.json({ error: "E-mail уже используется, войдите или восстановите доступ" }, { status: 400 });
     }
 
@@ -93,7 +109,8 @@ export async function POST(request: Request) {
     
     return NextResponse.json({ 
       success: true, 
-      message: "Регистрация успешна. Подтвердите email." 
+      message: "Регистрация успешна. Подтвердите email.",
+      debugCode: verificationCode // Временно для тестирования
     });
 
   } catch (error) {
