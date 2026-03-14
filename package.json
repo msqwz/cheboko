@@ -8,7 +8,8 @@
     "build": "next build",
     "build:turbo": "next build --turbo",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "clean": "rm -rf .next node_modules && npm install"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.1",

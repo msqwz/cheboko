@@ -16,17 +16,14 @@ const nextConfig: NextConfig = {
   },
   
   
-  // Кэширование
-  experimental: {
+  // Оптимизация импортов (временно отключена для фикса ChunkLoadError)
+  /*experimental: {
     optimizePackageImports: ['lucide-react', 'clsx'],
-  },
+  },*/
 
-  // Игнорируем ошибки TS и ESLint при сборке (чтобы деплой не падал из-за типов)
+  // Игнорируем ошибки TS при сборке
   typescript: {
     ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
 };
 
