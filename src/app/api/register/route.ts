@@ -13,24 +13,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email обязателен" }, { status: 400 });
     }
 
-    // Role safety check
-    const allowedRoles = ["OPERATOR", "REGIONAL_MANAGER", "CLIENT_NETWORK_HEAD"];
-    if (!allowedRoles.includes(role)) {
-      return NextResponse.json({ error: "Недопустимая роль для регистрации" }, { status: 400 });
-    }
-
-    // Email format check
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: "Введите корректный e-mail" }, { status: 400 });
-    }
-
-    const passwordCheck = validatePassword(password);
-    if (!passwordCheck.isValid) {
-      console.log("[REGISTER] Password validation failed:", passwordCheck.message);
-      return NextResponse.json({ error: passwordCheck.message }, { status: 400 });
-    }
-
     // 2. Check if user already exists
     console.log("[REGISTER] Checking if user exists in Supabase...");
     const { data: existingUser, error: checkError } = await supabase
@@ -63,6 +45,24 @@ export async function POST(request: Request) {
 
       console.log("[REGISTER] User already exists and verified:", email);
       return NextResponse.json({ error: "E-mail уже используется, войдите или восстановите доступ" }, { status: 400 });
+    }
+
+    // Role safety check
+    const allowedRoles = ["OPERATOR", "REGIONAL_MANAGER", "CLIENT_NETWORK_HEAD"];
+    if (!allowedRoles.includes(role)) {
+      return NextResponse.json({ error: "Недопустимая роль для регистрации" }, { status: 400 });
+    }
+
+    // Email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: "Введите корректный e-mail" }, { status: 400 });
+    }
+
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.isValid) {
+      console.log("[REGISTER] Password validation failed:", passwordCheck.message);
+      return NextResponse.json({ error: passwordCheck.message }, { status: 400 });
     }
 
     // 3. Hash password

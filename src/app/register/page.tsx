@@ -24,22 +24,6 @@ function RegisterContent() {
     agreeToTerms: false,
   });
 
-  useEffect(() => {
-    const emailParam = searchParams.get("email");
-    const stepParam = searchParams.get("step");
-    
-    if (emailParam) {
-      setFormData(prev => ({ ...prev, email: emailParam }));
-    }
-    
-    if (stepParam === "verify") {
-      setStep("verify");
-      if (emailParam) {
-        handleResendForEmail(emailParam);
-      }
-    }
-  }, [searchParams]);
-
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -63,6 +47,22 @@ function RegisterContent() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const emailParam = searchParams.get("email");
+    const stepParam = searchParams.get("step");
+    
+    if (emailParam) {
+      setFormData(prev => ({ ...prev, email: emailParam }));
+    }
+    
+    if (stepParam === "verify") {
+      setStep("verify");
+      if (emailParam) {
+        handleResendForEmail(emailParam);
+      }
+    }
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
