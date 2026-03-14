@@ -55,13 +55,8 @@
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 24px;
   overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  -ms-overflow-style: auto;
   -webkit-overflow-scrolling: touch;
-}
-
-.tabsContainer::-webkit-scrollbar {
-  display: none;
 }
 
 .tab {
@@ -147,11 +142,6 @@
   flex-direction: column;
   margin-top: 4px;
   animation: dropdownFade 0.2s ease-out;
-  scrollbar-width: none;
-}
-
-.dropdownMenu::-webkit-scrollbar {
-  display: none;
 }
 
 @keyframes dropdownFade {
@@ -233,20 +223,14 @@
   }
 
   .filterSecondaryRow {
-    display: flex !important; /* Force flex for horizontal scroll */
     overflow-x: auto !important;
     gap: 12px;
     padding-bottom: 8px;
     padding-top: 8px;
     border-top: 1px solid var(--border-glass);
-    scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     flex-wrap: nowrap;
     width: 100%;
-  }
-
-  .filterSecondaryRow::-webkit-scrollbar {
-    display: none;
   }
   
   .filterGroup {
@@ -267,10 +251,6 @@
     gap: 0;
     flex-wrap: nowrap;
     display: flex !important;
-  }
-  
-  .tabsContainer::-webkit-scrollbar {
-    display: none;
   }
 
   .tab {

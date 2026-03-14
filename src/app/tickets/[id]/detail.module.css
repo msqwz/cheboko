@@ -284,11 +284,6 @@
     gap: 8px;
     padding-bottom: 8px;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .actionBtnRow::-webkit-scrollbar {
-    display: none;
   }
 
   .btnPrimary, .btnWarning, .btnDanger {

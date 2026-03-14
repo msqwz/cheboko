@@ -19,13 +19,8 @@
   height: 100%;
   width: 100%;
   overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  -ms-overflow-style: auto;
   -webkit-overflow-scrolling: touch;
-}
-
-.navList::-webkit-scrollbar {
-  display: none;
 }
 
 .navItem {

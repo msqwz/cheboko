@@ -127,19 +127,12 @@
 html, body {
   font-family: var(--font-sans);
   background-color: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100dvh;
-  width: 100vw;
-  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+  overflow: hidden !important;
+  position: fixed; /* Lock browser elastic scroll */
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@media (min-width: 1025px) {
-  html, body {
-    height: 100dvh;
-    overflow: hidden;
-  }
+  -moz-osx-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -160,8 +153,13 @@ ul {
 /* Base Layout Config */
 .app-layout {
   display: flex;
-  height: 100dvh;
-  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -169,7 +167,7 @@ ul {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -179,7 +177,7 @@ ul {
 
 @media (max-width: 1024px) {
   .main-content {
-    height: calc(100dvh - var(--bottom-nav-height));
+    padding-bottom: var(--bottom-nav-height);
   }
 }
 
@@ -190,8 +188,7 @@ ul {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  position: relative; /* Для позиционирования модальных окон */
-  min-height: calc(100vh - 48px); /* Занимает всю высоту за вычетом отступов */
+  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -214,10 +211,10 @@ ul {
   animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Scrollbar */
+/* Scrollbar - Elegant & Visible */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
