@@ -9,6 +9,8 @@
   position: relative;
   z-index: 50;
   transition: transform 0.3s ease;
+  height: 100%; /* Fill the grid height */
+  grid-column: 1; /* Explicitly place in first desktop column */
 }
 
 .logoContainer {
