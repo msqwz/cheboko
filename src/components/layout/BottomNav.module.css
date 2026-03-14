@@ -1,17 +1,15 @@
 .bottomNav {
   display: none;
-  background-color: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid var(--border-glass);
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100vw;
   height: var(--bottom-nav-height);
   z-index: 100;
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .navList {

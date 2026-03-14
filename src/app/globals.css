@@ -169,7 +169,7 @@ ul {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  height: 100dvh;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -177,11 +177,13 @@ ul {
   scroll-behavior: smooth;
 }
 
-@media (min-width: 1025px) {
+@media (max-width: 1024px) {
   .main-content {
-    height: 100dvh;
+    height: calc(100dvh - var(--bottom-nav-height));
   }
 }
+
+/* Removed redundant desktop height override */
 
 .page-container {
   padding: 24px;
@@ -196,8 +198,9 @@ ul {
 
 @media (max-width: 1024px) {
   .page-container {
-    padding-top: max(24px, env(safe-area-inset-top));
-    padding-bottom: 120px !important; /* Force safety margin to clear bottom nav */
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: 24px !important;
+    min-height: 100%;
   }
 }
 
