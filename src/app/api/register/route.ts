@@ -8,9 +8,9 @@ export async function POST(request: Request) {
   try {
     const { name, email, phone, role, password } = await request.json();
     console.log("[REGISTER] Data received:", { name, email, phone, role });
-    if (!name || !email || !phone || !role || !password) {
-      console.log("[REGISTER] Missing fields");
-      return NextResponse.json({ error: "Все поля обязательны" }, { status: 400 });
+    
+    if (!email) {
+      return NextResponse.json({ error: "Email обязателен" }, { status: 400 });
     }
 
     // Role safety check
@@ -66,6 +66,10 @@ export async function POST(request: Request) {
     }
 
     // 3. Hash password
+    if (!name || !phone || !role || !password) {
+      return NextResponse.json({ error: "Для регистрации нового пользователя заполните все поля" }, { status: 400 });
+    }
+
     console.log("[REGISTER] Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
 

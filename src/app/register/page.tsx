@@ -34,12 +34,35 @@ function RegisterContent() {
     
     if (stepParam === "verify") {
       setStep("verify");
+      if (emailParam) {
+        handleResendForEmail(emailParam);
+      }
     }
   }, [searchParams]);
+
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [debugCode, setDebugCode] = useState("");
+
+  const handleResendForEmail = async (email: string) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.debugCode) {
+        setDebugCode(data.debugCode);
+      }
+    } catch (e) {
+      console.error("Auto-resend failed");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -109,28 +132,10 @@ function RegisterContent() {
   };
 
   const handleResend = async () => {
-    setIsLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name || "TEST",
-          email: formData.email,
-          phone: formData.phone || "79000000000",
-          role: formData.role || "OPERATOR",
-          password: formData.password || "Password123!",
-        }),
-      });
-      const data = await res.json();
-      if (data.debugCode) {
-        setDebugCode(data.debugCode);
-      }
-    } catch (e) {
-      setError("Не удалось отправить код повторно");
-    } finally {
-      setIsLoading(false);
+    if (formData.email) {
+      handleResendForEmail(formData.email);
+    } else {
+      setError("Email не найден");
     }
   };
 
