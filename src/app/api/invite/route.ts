@@ -1,6 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ROLE_HIERARCHY } from "@/lib/roles";
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
+import crypto from "crypto";
 
 export async function POST(request: Request) {
   try {
