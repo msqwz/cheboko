@@ -1,6 +1,6 @@
 "use client";
 
-import pageStyles from "@/app/(admin)/manager/page.module.css";
+import pageStyles from "@/app/(manager)/manager/page.module.css";
 import clsx from "clsx";
 import { Settings, Save, Bell, Shield, PaintBucket, Loader2, Moon, Sun } from "lucide-react";
 import { useState, useEffect } from "react";

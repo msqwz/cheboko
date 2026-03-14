@@ -1,6 +1,6 @@
 "use client";
 
-import pageStyles from "@/app/(admin)/network/page.module.css";
+import pageStyles from "@/app/(network-head)/network/page.module.css";
 import clsx from "clsx";
 import { User, Mail, Phone, MapPin, KeyRound, LogOut, Save, Loader2 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";

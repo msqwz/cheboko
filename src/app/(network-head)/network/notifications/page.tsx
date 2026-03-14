@@ -1,6 +1,6 @@
 "use client";
 
-import pageStyles from "@/app/(admin)/network/page.module.css";
+import pageStyles from "@/app/(network-head)/network/page.module.css";
 import clsx from "clsx";
 import { Bell, CheckCircle2, AlertTriangle, Coffee, Trash2, Loader2, Clock } from "lucide-react";
 import { useState, useEffect } from "react";

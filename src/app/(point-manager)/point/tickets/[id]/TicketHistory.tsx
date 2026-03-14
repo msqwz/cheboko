@@ -2,7 +2,7 @@
 
 import { Clock, User, MessageSquare, ArrowRight, UserPlus } from "lucide-react";
 import styles from "./detail.module.css";
-import pageStyles from "@/app/(admin)/admin/page.module.css";
+import pageStyles from "@/app/(point-manager)/point/page.module.css";
 import clsx from "clsx";
 
 interface HistoryItem {
