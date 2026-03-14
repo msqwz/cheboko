@@ -37,7 +37,12 @@ export default function Sidebar() {
   }, [session]);
 
   // Не рендерить боковое меню на страницах авторизации
-  if (pathname === "/login" || pathname === "/register") {
+  if (
+    pathname === "/login" || 
+    pathname === "/register" || 
+    pathname === "/forgot-password" || 
+    pathname.startsWith("/reset-password")
+  ) {
     return null;
   }
 

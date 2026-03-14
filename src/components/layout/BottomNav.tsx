@@ -14,7 +14,12 @@ export default function BottomNav() {
   const role = (session?.user as any)?.role;
 
   // Не рендерим на странице авторизации
-  if (pathname === "/login" || pathname === "/register") {
+  if (
+    pathname === "/login" || 
+    pathname === "/register" || 
+    pathname === "/forgot-password" || 
+    pathname.startsWith("/reset-password")
+  ) {
     return null;
   }
 

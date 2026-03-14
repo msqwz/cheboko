@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
-import { supabase, Ticket } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { recordTicketHistory, HistoryActions } from "@/lib/history";
 import crypto from "crypto";
+import { z } from "zod";
 
+const ticketSchema = z.object({
+  locationId: z.string().uuid("Некорректный ID локации"),
+  equipmentId: z.string().uuid("Некорректный ID оборудования").optional().nullable(),
+  problemType: z.string().min(1, "Укажите тип проблемы"),
+  description: z.string().min(5, "Описание должно быть содержательным"),
+  photos: z.array(z.string()).optional(),
+  attachments: z.array(z.string()).optional(),
+});
 
 export async function POST(req: Request) {
   try {
@@ -14,13 +23,19 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { locationId, equipmentId, problemType, description, photos, attachments } = body;
+    
+    // 1. Валидация через Zod
+    const validation = ticketSchema.safeParse(body);
+    if (!validation.success) {
+      const firstError = validation.error.issues[0].message;
+      return NextResponse.json({ error: firstError }, { status: 400 });
+    }
+
+    const { locationId, equipmentId, problemType, description, photos, attachments } = validation.data;
 
     // Генерация уникального номера заявки
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const prefix = `${year}-${month}-`;
+    const prefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-`;
 
     const { data: lastTicket } = await supabase
       .from('Ticket')
@@ -28,7 +43,7 @@ export async function POST(req: Request) {
       .like('ticketNumber', `${prefix}%`)
       .order('ticketNumber', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     let nextSeq = 1;
     if (lastTicket) {
@@ -41,12 +56,11 @@ export async function POST(req: Request) {
     // Получаем данные локации для clientId и уведомлений
     const { data: loc, error: locError } = await supabase
       .from('Location')
-      .select('id, address, name, legalName:name, clientId')
+      .select('id, address, name, clientId')
       .eq('id', locationId)
       .single();
 
     if (locError || !loc) {
-      console.error("[TICKET_CREATE] Location not found:", locationId, locError);
       return NextResponse.json({ error: "Указанная торговая точка не найдена" }, { status: 404 });
     }
 
@@ -70,19 +84,19 @@ export async function POST(req: Request) {
 
     if (error) throw error;
 
-    // Отправляем уведомления о новой заявке
+    // Отправляем уведомления о новой заявке (фоном)
     try {
       const { notifyTicketStatusChange } = await import("@/lib/notifications");
-      await notifyTicketStatusChange(
+      notifyTicketStatusChange(
         newTicket.id,
         newTicket.ticketNumber,
-        "", // oldStatus
+        "", 
         "CREATED",
         undefined,
-        loc?.legalName || loc?.address || "Не указана"
-      );
+        loc?.name || loc?.address || "Не указана"
+      ).catch(e => console.error("Notification failed:", e));
     } catch (notifErr) {
-      console.error("Failed to send creation notification:", notifErr);
+      // Игнорируем ошибки уведомлений для клиента
     }
 
     // 3. Записываем в историю
@@ -99,8 +113,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("Error creating ticket:", error);
     return NextResponse.json({ 
-      error: error.message || "Internal Server Error",
-      details: error.details || error.hint || ""
+      error: "Внутренняя ошибка при создании заявки"
     }, { status: 500 });
   }
 }

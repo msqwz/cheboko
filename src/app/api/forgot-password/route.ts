@@ -1,14 +1,23 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import crypto from "crypto";
+import { z } from "zod";
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Некорректный email"),
+});
 
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json();
-
-    if (!email) {
-      return NextResponse.json({ error: "Введите корректный e-mail" }, { status: 400 });
+    const body = await request.json();
+    
+    // 1. Валидация через Zod
+    const validation = forgotPasswordSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
+
+    const { email } = validation.data;
 
     // 1. Find user
     const { data: user, error: findError } = await supabase

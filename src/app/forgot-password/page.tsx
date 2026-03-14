@@ -42,16 +42,44 @@ export default function ForgotPasswordPage() {
     }
   };
 
+  const BrandedSidebar = () => (
+    <div className={styles.leftSidebar}>
+      <div className={styles.sidebarBg} />
+      <div className={styles.sidebarContent}>
+        <div className={styles.logoContainer} style={{ justifyContent: "flex-start", marginBottom: 60 }}>
+          <div className={styles.logoIcon}>
+            <Image src="/logo.png" alt="Logo" width={64} height={64} />
+          </div>
+          <span className={styles.logoText} style={{ color: "white" }}>Чебоко</span>
+        </div>
+
+        <h1 className={styles.sidebarTitle}>
+          Сервис, который работает без перебоев.
+        </h1>
+        <p className={styles.sidebarText}>
+          Единая B2B-платформа для управления заявками, обслуживания кофейных аппаратов и координации инженеров.
+        </p>
+      </div>
+    </div>
+  );
+
   if (isSuccess) {
     return (
-      <div className={clsx(styles.container, "flex items-center justify-center")}>
-        <div className={styles.authCard} style={{ textAlign: "center", maxWidth: 450 }}>
-          <CheckCircle size={64} color="var(--status-low)" style={{ margin: "0 auto 20px" }} />
-          <h2 className={styles.title}>Проверьте почту</h2>
-          <p className={styles.subtitle}>{message}</p>
-          <Link href="/login" className={styles.btnSubmit} style={{ marginTop: 20, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            Вернуться ко входу
-          </Link>
+      <div className={clsx(styles.container, "animate-fade-in")}>
+        <div className={styles.gradientBlob1} />
+        <div className={styles.gradientBlob2} />
+        
+        <BrandedSidebar />
+
+        <div className={styles.rightContent}>
+          <div className={styles.authCard} style={{ textAlign: "center" }}>
+            <CheckCircle size={64} color="var(--status-low)" style={{ margin: "0 auto 20px" }} />
+            <h2 className={styles.title}>Проверьте почту</h2>
+            <p className={styles.subtitle}>{message}</p>
+            <Link href="/login" className={styles.btnSubmit} style={{ marginTop: 20, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              Вернуться ко входу
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -62,11 +90,13 @@ export default function ForgotPasswordPage() {
       <div className={styles.gradientBlob1} />
       <div className={styles.gradientBlob2} />
 
-      <div className={styles.rightContent} style={{ width: '100%', maxWidth: 'none', display: 'flex', justifyContent: 'center' }}>
-        <div className={styles.authCard} style={{ maxWidth: 450 }}>
+      <BrandedSidebar />
+
+      <div className={styles.rightContent}>
+        <div className={styles.authCard}>
           <div className={styles.logoContainer}>
              <div className={styles.logoIcon}>
-               <Image src="/logo.png" alt="Logo" width={40} height={40} />
+               <Image src="/logo.png" alt="Logo" width={60} height={60} />
              </div>
              <span className={styles.logoText}>Чебоко</span>
           </div>
@@ -76,7 +106,7 @@ export default function ForgotPasswordPage() {
 
           <form onSubmit={handleSubmit}>
             {error && (
-              <div style={{ padding: "12px", background: "#fee2e2", color: "#ef4444", borderRadius: "8px", marginBottom: "16px", fontSize: "14px" }}>
+              <div style={{ padding: "12px", background: "var(--status-high-bg, #fee2e2)", color: "var(--status-high, #ef4444)", borderRadius: "8px", marginBottom: "16px", fontSize: "14px" }}>
                 {error}
               </div>
             )}

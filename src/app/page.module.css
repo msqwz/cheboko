@@ -13,14 +13,14 @@
 }
 
 .title {
-  font-size: 28px;
+  font-size: var(--text-2xl);
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--text-primary);
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   margin-top: 4px;
 }
@@ -32,10 +32,10 @@
 
 .btnPrimary {
   background: var(--accent-primary);
-  color: #fff;
+  color: #FFFFFF;
   padding: 10px 20px;
   border-radius: var(--radius-md);
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -98,14 +98,14 @@
 }
 
 .statValue {
-  font-size: 32px;
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -1px;
 }
 
 .statLabel {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   margin-top: 4px;
   font-weight: 500;
@@ -178,7 +178,7 @@
 
 /* Section Shared */
 .sectionTitle {
-  font-size: 18px;
+  font-size: var(--text-lg);
   font-weight: 600;
   margin-bottom: 16px;
   color: var(--text-primary);

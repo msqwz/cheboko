@@ -33,15 +33,23 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
   
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Typography Scale */
+  --text-3xl: 48px;
+  --text-2xl: 36px;
+  --text-xl: 24px;
+  --text-lg: 18px;
+  --text-md: 15px;
+  --text-sm: 14px;
+  --text-xs: 12px;
   
   /* Layout */
   --sidebar-width: 260px;
   --header-height: 70px;
   --bottom-nav-height: 80px;
   
-  /* Modal Overlay */
-  --modal-overlay: transparent;
+  /* Overlays & Special */
+  --modal-overlay: rgba(0, 0, 0, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 /* Modal Overlay Styles */

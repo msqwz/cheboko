@@ -1,71 +1,36 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
-import { validatePassword } from "@/lib/passwordValidator";
 import crypto from "crypto";
+import { z } from "zod";
+
+const registerSchema = z.object({
+  name: z.string().min(2, "Имя слишком короткое"),
+  email: z.string().email("Некорректный email"),
+  phone: z.string().min(5, "Укажите корректный телефон"),
+  role: z.enum(["OPERATOR", "REGIONAL_MANAGER", "CLIENT_NETWORK_HEAD"]),
+  password: z.string().min(6, "Пароль должен быть не менее 6 символов"),
+});
 
 export async function POST(request: Request) {
   try {
-    const { name, email, phone, role, password } = await request.json();
-    console.log("[REGISTER] Data received:", { name, email, phone, role });
+    const body = await request.json();
     
-    if (!email) {
-      return NextResponse.json({ error: "Email обязателен" }, { status: 400 });
+    // 1. Валидация данных через Zod
+    const validation = registerSchema.safeParse(body);
+    if (!validation.success) {
+      const firstError = validation.error.issues[0].message;
+      return NextResponse.json({ error: firstError }, { status: 400 });
     }
 
+    const { name, email, phone, role, password } = validation.data;
+    
     // 2. Check if user already exists
-    console.log("[REGISTER] Checking if user exists in Supabase...");
     const { data: existingUser, error: checkError } = await supabase
       .from('User')
       .select('id, isVerified')
       .eq('email', email)
       .maybeSingle();
-
-    if (checkError) {
-      console.error("[REGISTER] Supabase check error:", checkError);
-      return NextResponse.json({ error: "Ошибка базы данных при проверке" }, { status: 500 });
-    }
-
-    if (existingUser) {
-      // ПРОВЕРКА: Если пользователь уже есть, но не верифицирован — генерируем новый код
-      if (!existingUser.isVerified) {
-        console.log("[REGISTER] User exists but not verified. Regenerating code...");
-        const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-        await supabase
-          .from('User')
-          .update({ verificationCode: newCode })
-          .eq('email', email);
-          
-        return NextResponse.json({ 
-          success: true, 
-          message: "Новый код подтверждения отправлен (временно возвращен в ответе)",
-          debugCode: newCode
-        });
-      }
-
-      console.log("[REGISTER] User already exists and verified:", email);
-      return NextResponse.json({ error: "E-mail уже используется, войдите или восстановите доступ" }, { status: 400 });
-    }
-
-    // --- НОВЫЙ ПОЛЬЗОВАТЕЛЬ ---
-    // 1. Проверяем наличие всех обязательных полей
-    if (!name || !phone || !role || !password) {
-      console.log("[REGISTER] Missing fields for new user");
-      return NextResponse.json({ error: "Для регистрации заполните все поля" }, { status: 400 });
-    }
-
-    // 2. Валидация роли
-    const allowedRoles = ["OPERATOR", "REGIONAL_MANAGER", "CLIENT_NETWORK_HEAD"];
-    if (!allowedRoles.includes(role)) {
-      return NextResponse.json({ error: "Недопустимая роль для регистрации" }, { status: 400 });
-    }
-
-    // 3. Валидация пароля
-    const passwordCheck = validatePassword(password);
-    if (!passwordCheck.isValid) {
-      console.log("[REGISTER] Password validation failed:", passwordCheck.message);
-      return NextResponse.json({ error: passwordCheck.message }, { status: 400 });
-    }
 
     // 3. Hash password
     console.log("[REGISTER] Hashing password...");

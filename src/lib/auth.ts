@@ -12,8 +12,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        console.log('[AUTH] Attempting login:', credentials?.email);
-        
         if (!credentials?.email || !credentials?.password) {
           console.log('[AUTH] No credentials');
           throw new Error("Заполните Email и Пароль");
@@ -25,22 +23,18 @@ export const authOptions: NextAuthOptions = {
           .eq('email', credentials.email)
           .limit(1);
 
-        console.log('[AUTH] Supabase response:', { data, error });
-
         if (error) {
           console.error('[AUTH] Supabase error:', error);
           throw new Error("Ошибка базы данных: " + error.message);
         }
         
         if (!data || data.length === 0) {
-          console.log('[AUTH] User not found');
           throw new Error("Неверный Email или пароль");
         }
 
         const user = data[0] as User;
 
         const isValid = await bcrypt.compare(credentials.password, user.password);
-        console.log('[AUTH] Password valid:', isValid);
         
         if (!isValid) {
           throw new Error("Неверный Email или пароль");

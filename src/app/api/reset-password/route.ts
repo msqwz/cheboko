@@ -1,20 +1,24 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
-import { validatePassword } from "@/lib/passwordValidator";
+import { z } from "zod";
+
+const resetPasswordSchema = z.object({
+  token: z.string().min(1, "Укажите токен восстановления"),
+  password: z.string().min(6, "Пароль должен быть не менее 6 символов"),
+});
 
 export async function POST(request: Request) {
   try {
-    const { token, password } = await request.json();
-
-    if (!token || !password) {
-      return NextResponse.json({ error: "Данные обязательны" }, { status: 400 });
+    const body = await request.json();
+    
+    // 1. Валидация через Zod
+    const validation = resetPasswordSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
 
-    const passCheck = validatePassword(password);
-    if (!passCheck.isValid) {
-      return NextResponse.json({ error: passCheck.message }, { status: 400 });
-    }
+    const { token, password } = validation.data;
 
     // 1. Find user by token
     const { data: user, error: findError } = await supabase
