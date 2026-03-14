@@ -3,13 +3,24 @@
 Этот метод подходит для любого сервера (VPS/VDS), где вы имеете полный доступ по SSH. Мы будем использовать **Docker** и **Docker Compose**, так как это самый надежный способ.
 
 ## 1. Установка Docker на сервер
-Выполните эти команды на вашем VPS:
-```bash
-sudo apt update
-sudo apt install -y docker.io docker-compose
-sudo systemctl start docker
-sudo systemctl enable docker
-```
+Самый простой и надежный способ установить официальную версию Docker на Ubuntu:
+
+1. Подключитесь к серверу по SSH.
+2. Выполните команду для скачивания и запуска официального установщика:
+   ```bash
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sudo sh get-docker.sh
+   ```
+3. Проверьте, что Docker установился:
+   ```bash
+   docker --version
+   docker compose version
+   ```
+4. (Опционально) Чтобы не писать `sudo` перед каждой командой:
+   ```bash
+   sudo usermod -aG docker $USER
+   ```
+   *После этого нужно перезайти на сервер (выход и вход).*
 
 ## 2. Подготовка файлов проекта
 1. Склонируйте ваш репозиторий на сервер:
