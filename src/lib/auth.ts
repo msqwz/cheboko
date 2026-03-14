@@ -46,6 +46,14 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Неверный Email или пароль");
         }
 
+        if (user.isVerified === false) {
+          throw new Error("EMAIL_NOT_VERIFIED");
+        }
+
+        if (user.isDeleted === true) {
+          throw new Error("PROFILE_DELETED");
+        }
+
         return {
           id: user.id,
           name: user.name,

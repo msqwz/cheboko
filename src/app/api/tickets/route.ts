@@ -3,6 +3,7 @@ import { supabase, Ticket } from "@/lib/supabase";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { recordTicketHistory, HistoryActions } from "@/lib/history";
+import crypto from "crypto";
 
 
 export async function POST(req: Request) {
@@ -37,6 +38,18 @@ export async function POST(req: Request) {
     }
     const ticketNumber = `${prefix}${String(nextSeq).padStart(4, "0")}`;
 
+    // Получаем данные локации для clientId и уведомлений
+    const { data: loc, error: locError } = await supabase
+      .from('Location')
+      .select('id, address, name, legalName:name, clientId')
+      .eq('id', locationId)
+      .single();
+
+    if (locError || !loc) {
+      console.error("[TICKET_CREATE] Location not found:", locationId, locError);
+      return NextResponse.json({ error: "Указанная торговая точка не найдена" }, { status: 404 });
+    }
+
     const { data: newTicket, error } = await supabase
       .from('Ticket')
       .insert({
@@ -48,9 +61,8 @@ export async function POST(req: Request) {
         description,
         attachments: attachments || photos || [],
         creatorId: (session.user as any).id,
-        clientId: (session.user as any).id,
-        status: "OPENED",
-
+        clientId: loc?.clientId || (session.user as any).id,
+        status: "CREATED",
         priority: "MEDIUM",
       })
       .select()
@@ -60,12 +72,6 @@ export async function POST(req: Request) {
 
     // Отправляем уведомления о новой заявке
     try {
-      const { data: loc } = await supabase
-        .from('Location')
-        .select('address, legalName')
-        .eq('id', locationId)
-        .single();
-        
       const { notifyTicketStatusChange } = await import("@/lib/notifications");
       await notifyTicketStatusChange(
         newTicket.id,
@@ -90,9 +96,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newTicket, { status: 201 });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating ticket:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ 
+      error: error.message || "Internal Server Error",
+      details: error.details || error.hint || ""
+    }, { status: 500 });
   }
 }
 
@@ -113,27 +122,55 @@ export async function GET(req: Request) {
       .from('Ticket')
       .select(`
         *,
-        location:Location!locationId(*),
+        location:Location!locationId(*, legalName:name),
         equipment:Equipment!equipmentId(*),
         engineer:User!engineerId(*),
         creator:User!creatorId(*)
       `)
       .order('createdAt', { ascending: false });
 
-    // Изоляция данных для клиента
-    const userRole = (session.user as { role?: string }).role;
-    if (userRole === 'CLIENT' || userRole === 'CLIENT_MANAGER') {
-      query = query.eq('clientId', (session.user as { id?: string }).id);
+    // Изоляция данных согласно матрице прав по ТЗ
+    const userRole = (session.user as any).role;
+    const userId = (session.user as any).id;
+
+    if (userRole === 'REGIONAL_MANAGER') {
+      // Менеджер региона видит только свой регион
+      const { data: userData } = await supabase.from('User').select('region').eq('id', userId).single();
+      if (userData?.region) {
+        // Фильтруем через join с Location
+        query = query.eq('location.region', userData.region);
+      } else {
+        // Если регион не задан, ничего не показываем для безопасности
+        return NextResponse.json([]);
+      }
+    } else if (userRole === 'CLIENT_NETWORK_HEAD') {
+      // Руководитель сети видит все заявки своей компании
+      // В текущей схеме clientId в билете — это ID пользователя-руководителя или компании
+      query = query.eq('clientId', userId);
+    } else if (userRole === 'CLIENT_POINT_MANAGER') {
+      // Управляющий точкой видит только заявки по своему адресу
+      const { data: userData } = await supabase.from('User').select('locationId').eq('id', userId).single();
+      if (userData?.locationId) {
+        query = query.eq('locationId', userData.locationId);
+      } else {
+        return NextResponse.json([]);
+      }
+    } else if (userRole === 'CLIENT_SPECIALIST') {
+      // Специалист видит только свои заявки
+      query = query.eq('creatorId', userId);
+    } else if (userRole === 'ENGINEER') {
+      // Инженер видит только назначенные на него
+      query = query.eq('engineerId', userId);
     } else if (creatorId) {
+      // Дополнительный фильтр если передан явно
       query = query.eq('creatorId', creatorId);
     }
 
     if (status) {
       if (status === 'active') {
-        query = query.not('status', 'in', '(COMPLETED,CANCELED)');
+        query = query.not('status', 'in', '(COMPLETED,CANCELED,REJECTED)');
       } else if (status === 'history') {
-
-        query = query.in('status', ['COMPLETED', 'CANCELED']);
+        query = query.in('status', ['COMPLETED', 'CANCELED', 'REJECTED']);
       } else if (status !== 'all') {
         query = query.eq('status', status);
       }
@@ -144,7 +181,6 @@ export async function GET(req: Request) {
     }
 
     if (search) {
-      // Поиск по нескольким полям - нужно делать через filter
       query = query.or(`ticketNumber.ilike.%${search}%,description.ilike.%${search}%`);
     }
 

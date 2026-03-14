@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Coffee, Ticket as TicketIcon, Users, Settings, Bell, LogOut } from "lucide-react";
+import { useTheme } from "@/lib/useTheme";
+import { Coffee, Ticket as TicketIcon, Users, Settings, Bell, LogOut, Moon, Sun } from "lucide-react";
 import styles from "./Sidebar.module.css";
 import clsx from "clsx";
 import { useState, useEffect } from "react";
@@ -13,6 +14,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const role = (session?.user as any)?.role;
+  const { theme, toggleTheme } = useTheme();
   const [unreadCount, setUnreadCount] = useState(0);
 
   // Получаем количество непрочитанных уведомлений
@@ -125,16 +127,26 @@ export default function Sidebar() {
         <div className={styles.avatar}>
           {session?.user?.name ? session.user.name.substring(0, 1) : <Users size={20} color="var(--text-muted)" />}
         </div>
-        <Link href="/profile" className={styles.userInfo} style={{ textDecoration: 'none' }}>
+        <Link href="/profile" className={styles.userInfo} style={{ textDecoration: 'none', flex: 1 }}>
           <span className={styles.userName}>{session?.user?.name || "Пользователь"}</span>
           <span className={styles.userRole}>{roleText((session?.user as any)?.role || "")}</span>
         </Link>
-        <button 
-          onClick={() => signOut()}
-          style={{ marginLeft: "auto", color: "var(--text-muted)", background: "transparent", border: "none", cursor: "pointer" }}
-        >
-          <LogOut size={20} />
-        </button>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <button 
+            onClick={toggleTheme}
+            className={styles.themeToggle}
+            title={theme === 'light' ? "Темная тема" : "Светлая тема"}
+          >
+            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
+          <button 
+            onClick={() => signOut()}
+            className={styles.logoutBtn}
+            title="Выйти"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
       </div>
     </aside>
   );

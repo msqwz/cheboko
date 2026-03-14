@@ -2,9 +2,10 @@
 
 import pageStyles from "@/app/page.module.css";
 import clsx from "clsx";
-import { Settings, Save, Bell, Shield, PaintBucket, Loader2 } from "lucide-react";
+import { Settings, Save, Bell, Shield, PaintBucket, Loader2, Moon, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useTheme } from "@/lib/useTheme";
 
 
 type SettingsData = {
@@ -88,6 +89,8 @@ export default function SettingsPage() {
   const updateSetting = (key: keyof SettingsData, value: string | boolean) => {
     setSettings(prev => ({ ...prev, [key]: String(value) }));
   };
+  const { theme, setTheme } = useTheme();
+
   return (
     <div className={clsx("page-container", "animate-fade-in")}>
       <header className={pageStyles.header}>
@@ -343,17 +346,38 @@ export default function SettingsPage() {
 
                 <div style={{ padding: "16px", background: "var(--bg-hover)", borderRadius: "var(--radius-md)", marginBottom: 16 }}>
                   <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-                    🎨 Темизация и настройки интерфейса будут доступны в следующем обновлении.
+                    🎨 Настройте внешний вид платформы под свои предпочтения. Изменения применяются мгновенно.
                   </p>
                 </div>
 
                 <div className={pageStyles.formGroup}>
-                  <label className={pageStyles.formLabel}>Тема</label>
-                  <select className={pageStyles.formInput} style={{ maxWidth: 200 }} disabled>
-                    <option>Светлая (по умолчанию)</option>
-                    <option>Тёмная</option>
-                    <option>Системная</option>
-                  </select>
+                  <label className={pageStyles.formLabel}>Тема оформления</label>
+                  <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+                    <button 
+                      onClick={() => setTheme('light')}
+                      className={pageStyles.btnSecondary}
+                      style={{ 
+                        flex: 1, 
+                        justifyContent: "center",
+                        border: theme === 'light' ? "2px solid var(--accent-primary)" : "1px solid var(--border-color)",
+                        background: theme === 'light' ? "var(--accent-glow)" : "transparent"
+                      }}
+                    >
+                      <Sun size={18} /> Светлая
+                    </button>
+                    <button 
+                      onClick={() => setTheme('dark')}
+                      className={pageStyles.btnSecondary}
+                      style={{ 
+                        flex: 1, 
+                        justifyContent: "center",
+                        border: theme === 'dark' ? "2px solid var(--accent-primary)" : "1px solid var(--border-color)",
+                        background: theme === 'dark' ? "var(--accent-glow)" : "transparent"
+                      }}
+                    >
+                      <Moon size={18} /> Тёмная
+                    </button>
+                  </div>
                 </div>
               </>
             )}

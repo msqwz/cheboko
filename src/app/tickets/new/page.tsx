@@ -124,14 +124,14 @@ export default function NewTicketPage() {
         body: JSON.stringify({ ...formData, attachments: photoUrls }),
       });
       
-      if (!res.ok) throw new Error("Не удалось создать заявку");
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.error || "Не удалось создать заявку");
       
-      const ticket = await res.json();
-      alert(`Заявка успешно создана! Номер вашей заявки: ${ticket.ticketNumber}`);
+      alert(`Заявка успешно создана! Номер вашей заявки: ${resData.ticketNumber}`);
       router.push("/tickets");
       router.refresh();
-    } catch (err) {
-      alert("Ошибка создания заявки. Попробуйте снова.");
+    } catch (err: any) {
+      alert("Ошибка создания заявки: " + err.message);
       console.error(err);
     } finally {
       setIsSubmitting(false);

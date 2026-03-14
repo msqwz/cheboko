@@ -16,7 +16,7 @@ export async function GET(req: Request) {
 
     let query = supabase.from('Equipment').select(`
       *,
-      location:Location!locationId(id, address, name)
+      location:Location!locationId(*, legalName:name)
     `);
 
     if (locationId) {

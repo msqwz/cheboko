@@ -23,7 +23,7 @@ export async function GET(
       .from('Ticket')
       .select(`
         *,
-        location:Location!locationId(*),
+        location:Location!locationId(*, legalName:name),
         equipment:Equipment!equipmentId(*),
         creator:User!creatorId(*),
         engineer:User!engineerId(*),
@@ -219,7 +219,7 @@ export async function PATCH(
     try {
       const { data: fullTicket } = await supabase
         .from('Ticket')
-        .select('*, engineer:User!engineerId(*), location:Location!locationId(*)')
+        .select('*, engineer:User!engineerId(*), location:Location!locationId(*, legalName:name)')
         .eq('id', id)
         .single();
 

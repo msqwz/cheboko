@@ -114,6 +114,23 @@
   color: var(--text-muted);
 }
 
+.themeToggle, .logoutBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.themeToggle:hover, .logoutBtn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
 /* Mobile Breakpoint */
 @media (max-width: 1024px) {
   .sidebar {

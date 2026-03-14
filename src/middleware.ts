@@ -13,6 +13,6 @@ export const config = {
     "/tickets/:path*",
     "/profile/:path*",
     "/settings/:path*",
-    "/api/((?!auth).*)", // Защищаем API кроме /api/auth
+    "/api/((?!auth|register|verify|invite/verify|invite/activate).*)", // Защищаем API кроме публичных верификаций и регистрации
   ],
 };

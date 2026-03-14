@@ -14,12 +14,23 @@ export interface User {
   name: string | null;
   email: string;
   password: string;
-  role: 'ADMIN' | 'OPERATOR' | 'ENGINEER' | 'CLIENT' | 'CLIENT_MANAGER';
+  role: 'ADMIN' | 'OPERATOR' | 'REGIONAL_MANAGER' | 'CLIENT_NETWORK_HEAD' | 'CLIENT_POINT_MANAGER' | 'CLIENT_SPECIALIST' | 'ENGINEER';
 
   phone: string | null;
   address: string | null;
   latitude: string | null;
   longitude: string | null;
+  
+  // Verification fields
+  isVerified?: boolean;
+  verificationCode?: string | null;
+  verificationExpires?: string | null;
+  invitationToken?: string | null;
+  invitationExpires?: string | null;
+  isDeleted?: boolean;
+  resetToken?: string | null;
+  resetExpires?: string | null;
+
   createdAt: string;
   updatedAt: string;
 }
@@ -27,6 +38,7 @@ export interface User {
 export interface Location {
   id: string;
   name: string;
+  legalName?: string;
   address: string;
   latitude: string | null;
   longitude: string | null;
@@ -50,8 +62,8 @@ export interface Ticket {
   ticketNumber: string;
   title: string;
   description: string;
-  status: 'CREATED' | 'OPENED' | 'ASSIGNED' | 'ENROUTE' | 'IN_WORK' | 'ON_HOLD' | 'COMPLETED' | 'CANCELED' | 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  status: 'CREATED' | 'OPENED' | 'REJECTED' | 'ASSIGNED' | 'ENROUTE' | 'IN_WORK' | 'COMPLETED' | 'ON_HOLD' | 'CANCELED';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
   clientId: string;
   creatorId: string | null;
   engineerId: string | null;

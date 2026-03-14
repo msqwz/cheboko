@@ -588,7 +588,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: transparent; /* Убираем затемнение */
+  background: var(--modal-overlay); /* Используем переменную темы */
   display: flex;
   align-items: center; /* Центрирование по вертикали */
   justify-content: center; /* Центрирование по горизонтали */

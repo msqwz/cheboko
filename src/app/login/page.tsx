@@ -29,7 +29,15 @@ export default function LoginPage() {
       });
 
       if (res?.error) {
-        setError(res.error);
+        if (res.error === "EMAIL_NOT_VERIFIED") {
+          router.push(`/register?step=verify&email=${encodeURIComponent(email)}`);
+        } else if (res.error === "PROFILE_DELETED") {
+          setError("Ваш профиль удален. Обратитесь к Администратору");
+        } else if (res.error === "CredentialsSignin") {
+          setError("Неверный e-mail или пароль");
+        } else {
+          setError("Неверный e-mail или пароль"); // ТЗ требует именно такую форму для логина
+        }
         setIsLoading(false);
       } else {
         router.push("/");
@@ -115,8 +123,8 @@ export default function LoginPage() {
                   required
                 />
               </div>
-              <Link href="#" className={styles.forgotPassword}>
-                Забыли пароль?
+              <Link href="/forgot-password" className={styles.forgotPassword}>
+                Забыли пароль? Восстановить доступ
               </Link>
             </div>
 
@@ -128,7 +136,7 @@ export default function LoginPage() {
 
           <div className={styles.bottomLink}>
             Нет аккаунта?
-            <Link href="mailto:support@cheboko.ru">Запросите доступ у администратора</Link>
+            <Link href="/register">Зарегистрироваться</Link>
           </div>
         </div>
       </div>

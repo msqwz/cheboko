@@ -41,7 +41,7 @@
   --bottom-nav-height: 80px;
   
   /* Modal Overlay */
-  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --modal-overlay: transparent;
 }
 
 /* Modal Overlay Styles */
@@ -83,24 +83,31 @@
 [data-theme='dark'] {
   /* Dark Obsidian Theme */
   --bg-primary: #0A0A0B;
-  --bg-secondary: #121214;
-  --bg-glass: rgba(18, 18, 20, 0.7);
+  --bg-secondary: #0F0F11;
+  --bg-glass: rgba(15, 15, 17, 0.8);
   --bg-hover: #1c1c1f;
   
-  --text-primary: #FFFFFF;
+  --text-primary: #f2f2f2;
   --text-secondary: #A1A1AA;
   --text-muted: #71717A;
   
   --accent-primary: #10B981;
   --accent-hover: #059669;
-  --accent-glow: rgba(16, 185, 129, 0.2);
+  --accent-glow: rgba(16, 185, 129, 0.15);
   
   --border-color: #27272A;
   --border-glass: rgba(255, 255, 255, 0.05);
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+
+  --status-high: #F87171;
+  --status-medium: #FBBF24;
+  --status-low: #60A5FA;
+  --status-success: #34D399;
+
+  --modal-overlay: transparent;
 }
 
 * {

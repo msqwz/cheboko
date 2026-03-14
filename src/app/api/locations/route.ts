@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import crypto from "crypto";
 
 export async function GET() {
   try {
@@ -12,21 +13,21 @@ export async function GET() {
 
     const { data: allLocations, error } = await supabase
       .from('Location')
-      .select('*');
+      .select('*, legalName:name');
 
     if (error) throw error;
 
     return NextResponse.json(allLocations);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching locations:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== 'ADMIN') {
+    if (!session?.user || !['ADMIN', 'OPERATOR'].includes((session.user as any).role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
         address,
         latitude: lat ? lat.toString() : null,
         longitude: lng ? lng.toString() : null,
-        clientId: managerId,
+        clientId: managerId || null,
       })
       .select()
       .single();
@@ -53,9 +54,9 @@ export async function POST(req: Request) {
     if (error) throw error;
 
     return NextResponse.json(newLocation, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating location:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -78,7 +79,7 @@ export async function PATCH(req: Request) {
     if (address) updateData.address = address;
     if (lat !== undefined) updateData.latitude = lat?.toString();
     if (lng !== undefined) updateData.longitude = lng?.toString();
-    if (managerId !== undefined) updateData.clientId = managerId;
+    if (managerId !== undefined) updateData.clientId = managerId || null;
 
     const { data: updated, error } = await supabase
       .from('Location')
@@ -94,16 +95,16 @@ export async function PATCH(req: Request) {
 
 
     return NextResponse.json(updated);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating location:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
 
 export async function DELETE(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== 'ADMIN') {
+    if (!session?.user || !['ADMIN', 'OPERATOR'].includes((session.user as any).role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -126,9 +127,9 @@ export async function DELETE(req: Request) {
 
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error deleting location:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Error in locations API:", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
 

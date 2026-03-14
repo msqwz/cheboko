@@ -5,6 +5,7 @@ import pageStyles from "@/app/page.module.css";
 import { Plus, Search, MapPin, Coffee, MoreVertical, Edit2, Loader2, X, Trash2 } from "lucide-react";
 
 import clsx from "clsx";
+import { getRoleText } from "@/lib/roles";
 
 export default function ClientsPage() {
   const [search, setSearch] = useState("");
@@ -34,7 +35,7 @@ export default function ClientsPage() {
       const userData = await userRes.json();
       
       setLocations(Array.isArray(locData) ? locData : []);
-      setManagers(Array.isArray(userData) ? userData.filter((u: any) => u.role === 'CLIENT_MANAGER') : []);
+      setManagers(Array.isArray(userData) ? userData.filter((u: any) => u.role?.startsWith('CLIENT_')) : []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -46,8 +47,22 @@ export default function ClientsPage() {
     fetchData();
   }, []);
 
+  // Автозаполнение менеджера при выборе существующей организации
+  useEffect(() => {
+    if (!editingItem && newLocation.legalName) {
+      const match = locations.find(l => (l.legalName || l.name) === newLocation.legalName);
+      if (match && match.clientId) {
+        setNewLocation(prev => ({ ...prev, managerId: match.clientId }));
+      }
+    }
+  }, [newLocation.legalName, locations, editingItem]);
+
   const handleSaveLocation = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newLocation.managerId) {
+      alert("Необходимо выбрать менеджера (Клиента)");
+      return;
+    }
     setIsSubmitting(true);
     try {
       const url = editingItem ? `/api/locations` : "/api/locations";
@@ -74,8 +89,8 @@ export default function ClientsPage() {
       setEditingItem(null);
       setNewLocation({ legalName: "", address: "", managerId: "" });
       fetchData();
-    } catch (err) {
-      alert("Ошибка при сохранении точки");
+    } catch (err: any) {
+      alert("Ошибка: " + err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -84,7 +99,7 @@ export default function ClientsPage() {
   const handleEdit = (loc: any) => {
     setEditingItem(loc);
     setNewLocation({
-      legalName: loc.name || "",
+      legalName: loc.legalName || loc.name || "",
       address: loc.address || "",
       managerId: loc.clientId || "",
     });
@@ -151,7 +166,6 @@ export default function ClientsPage() {
                 <th>Организация (Точка)</th>
                 <th>Адрес</th>
                 <th>Менеджер</th>
-                <th>Аппаратов</th>
                 <th>Статус</th>
                 <th style={{ width: 80 }}>Действия</th>
               </tr>
@@ -159,65 +173,77 @@ export default function ClientsPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: "center", padding: "40px" }}>
+                  <td colSpan={5} style={{ textAlign: "center", padding: "40px" }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
                       <Loader2 size={20} className="animate-spin" /> Загрузка объектов...
                     </div>
                   </td>
                 </tr>
-              ) : filteredClients.map((loc) => (
-                <tr key={loc.id}>
-                  <td>
-                    <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{loc.legalName || loc.address || "Объект без названия"}</div>
-
-                    <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>ID: {loc.id.substring(0, 8)}...</div>
-                  </td>
-                  <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <MapPin size={14} color="var(--text-muted)" />
-                      {loc.address}
-                    </div>
-                  </td>
-                  <td>
-                    <div>{managers.find(m => m.id === loc.managerId)?.name || "—"}</div>
-                    <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2 }}>{managers.find(m => m.id === loc.managerId)?.phone}</div>
-                  </td>
-                  <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 500 }}>
-                      <Coffee size={14} color="var(--accent-primary)" />
-                      {loc.equipments?.length || 0} ед.
-                    </div>
-                  </td>
-                  <td>
-                    <span className={clsx(pageStyles.badge, pageStyles.completed)}><div className={pageStyles.dot} /> Активен</span>
-                  </td>
-                  <td>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <button 
-                        onClick={() => handleEdit(loc)}
-                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent-primary)" }}
-                        title="Редактировать"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button 
-                        onClick={(e) => handleDelete(loc.id, e)}
-                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--status-high)" }}
-                        title="Удалить"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                      <button style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
-                        <MoreVertical size={16} />
-                      </button>
-                    </div>
-                  </td>
-
-                </tr>
-              ))}
+              ) : [...filteredClients]
+                  .sort((a, b) => (a.legalName || a.name || "").localeCompare(b.legalName || b.name || ""))
+                  .map((loc, index, array) => {
+                    const orgName = loc.legalName || loc.name || "Объект без названия";
+                    const isFirstInOrg = index === 0 || (array[index - 1].legalName || array[index - 1].name) !== (loc.legalName || loc.name);
+                    
+                    return (
+                      <tr key={loc.id} style={{ borderTop: isFirstInOrg && index !== 0 ? "2px solid var(--border-color)" : undefined }}>
+                        <td>
+                          {isFirstInOrg ? (
+                            <>
+                              <div style={{ fontWeight: 700, color: "var(--text-primary)", fontSize: "15px" }}>{orgName}</div>
+                              <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>ID: {loc.clientId.substring(0, 8)}...</div>
+                            </>
+                          ) : (
+                            <div style={{ color: "var(--text-muted)", paddingLeft: 12, fontSize: 12 }}>— продолжение —</div>
+                          )}
+                        </td>
+                        <td style={{ paddingLeft: isFirstInOrg ? undefined : 24 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <MapPin size={14} color={isFirstInOrg ? "var(--text-muted)" : "var(--accent-primary)"} />
+                            <span style={{ fontWeight: isFirstInOrg ? 500 : 400 }}>{loc.address}</span>
+                          </div>
+                          {!isFirstInOrg && <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>ID точки: {loc.id.substring(0, 8)}...</div>}
+                        </td>
+                        <td>
+                          {isFirstInOrg ? (
+                            <>
+                              <div>{managers.find(m => m.id === loc.managerId)?.name || "—"}</div>
+                              <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2 }}>{managers.find(m => m.id === loc.managerId)?.phone}</div>
+                            </>
+                          ) : (
+                            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Тот же менеджер</div>
+                          )}
+                        </td>
+                        <td>
+                          <span className={clsx(pageStyles.badge, pageStyles.completed)}><div className={pageStyles.dot} /> Активен</span>
+                        </td>
+                        <td>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <button 
+                              onClick={() => handleEdit(loc)}
+                              style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent-primary)" }}
+                              title="Редактировать"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button 
+                              onClick={(e) => handleDelete(loc.id, e)}
+                              style={{ background: "none", border: "none", cursor: "pointer", color: "var(--status-high)" }}
+                              title="Удалить"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                            <button style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
+                              <MoreVertical size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
               {!isLoading && filteredClients.length === 0 && (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>
+                  <td colSpan={5} style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>
                     Клиенты не найдены
                   </td>
                 </tr>
@@ -248,12 +274,18 @@ export default function ClientsPage() {
                   <label className={pageStyles.formLabel}>Название организации</label>
                   <input 
                     type="text" 
+                    list="orgNames"
                     placeholder="Напр: ООО Кофе Лайф"
                     className={pageStyles.formInput}
                     value={newLocation.legalName}
                     onChange={e => setNewLocation({...newLocation, legalName: e.target.value})}
                     required
                   />
+                  <datalist id="orgNames">
+                    {Array.from(new Set(locations.map(l => l.legalName || l.name))).filter(Boolean).map(name => (
+                      <option key={name} value={name} />
+                    ))}
+                  </datalist>
                 </div>
                 <div className={pageStyles.formGroup}>
                   <label className={pageStyles.formLabel}>Адрес (СПБ)</label>

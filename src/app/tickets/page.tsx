@@ -22,6 +22,8 @@ const getStatusBadge = (status: string) => {
       return <span className={clsx(pageStyles.badge, pageStyles.inWork)}><div className={pageStyles.dot} /> В работе</span>;
     case "ON_HOLD":
       return <span className={clsx(pageStyles.badge, pageStyles.hold)}><div className={pageStyles.dot} /> Пауза</span>;
+    case "REJECTED":
+      return <span className={clsx(pageStyles.badge, pageStyles.hold)}><div className={pageStyles.dot} style={{ backgroundColor: 'var(--status-high)' }} /> Отклонена</span>;
     case "COMPLETED":
       return <span className={clsx(pageStyles.badge, pageStyles.completed)}><div className={pageStyles.dot} /> Выполнена</span>;
     case "CANCELED":
@@ -402,45 +404,52 @@ export default function TicketsPage() {
             >
               <CheckCircle size={16} /> Завершить
             </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                const ticket = tickets.find(t => t.id === openMenuId);
-                if (ticket?.status !== "CANCELED") handleQuickCancel(openMenuId, e);
-              }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "12px 16px",
-                width: "100%",
-                background: "none",
-                border: "none",
-                borderBottom: "1px solid var(--border-color)",
-                cursor: "pointer",
-                color: "var(--status-high)",
-                textAlign: "left",
-              }}
-            >
-              <XCircle size={16} /> Отменить
-            </button>
-            <button
-              onClick={(e) => handleDeleteTicket(openMenuId, e)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "12px 16px",
-                width: "100%",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--status-high)",
-                textAlign: "left",
-              }}
-            >
-              <Trash2 size={16} /> Удалить
-            </button>
+            {/* Only Admin, RM, Operator, or Client can Cancel. Engineer cannot. */}
+            {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER' || userRole === 'OPERATOR' || userRole.startsWith('CLIENT_')) && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const ticket = tickets.find(t => t.id === openMenuId);
+                  if (ticket?.status !== "CANCELED" && ticket?.status !== "COMPLETED") handleQuickCancel(openMenuId, e);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "12px 16px",
+                  width: "100%",
+                  background: "none",
+                  border: "none",
+                  borderBottom: "1px solid var(--border-color)",
+                  cursor: "pointer",
+                  color: "var(--status-high)",
+                  textAlign: "left",
+                }}
+              >
+                <XCircle size={16} /> Отменить
+              </button>
+            )}
+            
+            {/* Only Admin or Regional Manager can Delete */}
+            {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER') && (
+              <button
+                onClick={(e) => handleDeleteTicket(openMenuId, e)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "12px 16px",
+                  width: "100%",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--status-high)",
+                  textAlign: "left",
+                }}
+              >
+                <Trash2 size={16} /> Удалить
+              </button>
+            )}
           </div>
         </div>
       )}
