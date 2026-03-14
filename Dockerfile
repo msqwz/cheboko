@@ -7,7 +7,7 @@ FROM base AS deps
 RUN apt-get update && apt-get install -y libc6 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # 2. Сборка проекта
 FROM base AS builder
