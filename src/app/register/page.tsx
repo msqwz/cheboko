@@ -31,6 +31,7 @@ function RegisterContent() {
 
   const handleResendForEmail = async (email: string) => {
     setIsLoading(true);
+    setError(""); // Сбрасываем старую ошибку
     try {
       const res = await fetch("/api/register", {
         method: "POST",
@@ -38,11 +39,15 @@ function RegisterContent() {
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Ошибка запроса кода");
+      }
       if (data.debugCode) {
         setDebugCode(data.debugCode);
       }
-    } catch (e) {
-      console.error("Auto-resend failed");
+    } catch (e: any) {
+      setError(e.message);
+      console.error("Auto-resend failed:", e);
     } finally {
       setIsLoading(false);
     }
@@ -379,7 +384,7 @@ function RegisterContent() {
                     />
                   </div>
                   {debugCode && (
-                    <p style={{ marginTop: "8px", fontSize: "14px", color: "var(--primary)", textAlign: "center", fontWeight: "bold" }}>
+                    <p style={{ marginTop: "8px", fontSize: "14px", color: "var(--accent-primary)", textAlign: "center", fontWeight: "bold" }}>
                       Временный код для теста: {debugCode}
                     </p>
                   )}
@@ -395,7 +400,7 @@ function RegisterContent() {
                 Не получили код?
                 <button 
                   onClick={handleResend}
-                  style={{ background: "none", border: "none", color: "var(--primary)", cursor: "pointer", padding: 0, marginLeft: "5px", fontSize: "inherit", fontWeight: "inherit" }}
+                  style={{ background: "none", border: "none", color: "var(--accent-primary)", cursor: "pointer", padding: 0, marginLeft: "5px", fontSize: "inherit", fontWeight: "inherit" }}
                 >
                   Отправить еще раз
                 </button>
