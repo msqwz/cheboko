@@ -120,11 +120,18 @@ html, body {
   font-family: var(--font-sans);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  height: 100dvh;
+  min-height: 100dvh;
   width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 1025px) {
+  html, body {
+    height: 100dvh;
+    overflow: hidden;
+  }
 }
 
 a {
@@ -154,10 +161,17 @@ ul {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  min-height: 100dvh;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 1025px) {
+  .main-content {
+    height: 100dvh;
+  }
 }
 
 .page-container {

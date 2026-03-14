@@ -78,7 +78,7 @@ export default function Sidebar() {
     <aside className={styles.sidebar}>
       <div className={styles.logoContainer}>
         <div className={styles.logoIcon}>
-          <Image src="/logo.png" alt="Чебоко" width={40} height={40} />
+          <Image src="/logo.png" alt="Чебоко" width={48} height={48} />
         </div>
         <span className={styles.logoText}>Чебоко</span>
       </div>

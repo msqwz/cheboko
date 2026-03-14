@@ -60,7 +60,7 @@ export default function LoginPage() {
         <div className={styles.sidebarContent}>
           <div className={styles.logoContainer} style={{ justifyContent: "flex-start", marginBottom: 60 }}>
             <div className={styles.logoIcon}>
-              <Image src="/logo.png" alt="Logo" width={40} height={40} />
+              <Image src="/logo.png" alt="Logo" width={64} height={64} />
             </div>
             <span className={styles.logoText} style={{ color: "white" }}>Чебоко</span>
           </div>

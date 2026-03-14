@@ -457,12 +457,14 @@
   }
 
   .statsRow {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
   }
 
   .statCard {
-    padding: 16px;
+    padding: 12px;
+    gap: 8px;
   }
 
   .statValue {
