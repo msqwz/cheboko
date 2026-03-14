@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    
+
     // 1. Валидация через Zod
     const validation = ticketSchema.safeParse(body);
     if (!validation.success) {
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
       notifyTicketStatusChange(
         newTicket.id,
         newTicket.ticketNumber,
-        "", 
+        "",
         "CREATED",
         undefined,
         loc?.name || loc?.address || "Не указана"
@@ -101,10 +101,10 @@ export async function POST(req: Request) {
 
     // 3. Записываем в историю
     await recordTicketHistory(
-      newTicket.id, 
-      (session.user as any).id, 
-      HistoryActions.CREATED, 
-      undefined, 
+      newTicket.id,
+      (session.user as any).id,
+      HistoryActions.CREATED,
+      undefined,
       newTicket.status
     );
 
@@ -112,7 +112,7 @@ export async function POST(req: Request) {
 
   } catch (error: any) {
     console.error("Error creating ticket:", error);
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: "Внутренняя ошибка при создании заявки"
     }, { status: 500 });
   }
@@ -147,13 +147,17 @@ export async function GET(req: Request) {
     const userId = (session.user as any).id;
 
     if (userRole === 'REGIONAL_MANAGER') {
-      // Менеджер региона видит только свой регион
+      // Менеджер региона видит только локации своего региона
       const { data: userData } = await supabase.from('User').select('region').eq('id', userId).single();
       if (userData?.region) {
-        // Фильтруем через join с Location
-        query = query.eq('location.region', userData.region);
+        const { data: regionLocations } = await supabase
+          .from('Location')
+          .select('id')
+          .eq('region', userData.region);
+        const locationIds = (regionLocations || []).map((l: any) => l.id);
+        if (locationIds.length === 0) return NextResponse.json([]);
+        query = query.in('locationId', locationIds);
       } else {
-        // Если регион не задан, ничего не показываем для безопасности
         return NextResponse.json([]);
       }
     } else if (userRole === 'CLIENT_NETWORK_HEAD') {

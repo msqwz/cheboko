@@ -1,10 +1,10 @@
 "use client";
-// v3.1 mobile ui fix
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Plus, Search, MoreVertical, Eye, Trash2, CheckCircle, XCircle } from "lucide-react";
+import { supabasePublic } from "@/lib/supabase";
 import styles from "./tickets.module.css";
 import pageStyles from "@/app/page.module.css";
 import clsx from "clsx";
@@ -56,7 +56,7 @@ export default function TicketsPage() {
   const { data: session } = useSession();
   const userId = (session?.user as any)?.id;
   const userRole = (session?.user as any)?.role;
-  
+
   const [activeTab, setActiveTab] = useState("active");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -69,7 +69,7 @@ export default function TicketsPage() {
   const handleDeleteTicket = async (ticketId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!confirm("Удалить эту заявку?")) return;
-    
+
     try {
       const res = await fetch(`/api/tickets/${ticketId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
@@ -136,31 +136,28 @@ export default function TicketsPage() {
 
     fetchTickets();
 
-    // Realtime subscription
-    const { supabase } = require("@/lib/supabase");
-    const channel = supabase
+    // Realtime subscription через публичный клиент
+    const channel = supabasePublic
       .channel('schema-db-changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'Ticket' },
-        () => {
-          fetchTickets();
-        }
+        () => { fetchTickets(); }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabasePublic.removeChannel(channel);
     };
   }, [activeTab, statusFilter, priorityFilter, searchQuery, userId, userRole]);
 
 
   const handleExportCSV = () => {
     if (tickets.length === 0) return;
-    
+
     // CSV Header
     const headers = ["Номер", "Описание", "Оборудование", "Локация", "Статус", "Приоритет", "Инженер", "Дата создания"];
-    
+
     // CSV Data
     const rows = tickets.map(t => [
       `"${t.ticketNumber.slice(-4)}"`,
@@ -173,7 +170,7 @@ export default function TicketsPage() {
       `"${new Date(t.createdAt).toLocaleDateString("ru-RU")}"`
     ]);
 
-    
+
     const csvContent = "\uFEFF" + [headers, ...rows].map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -212,29 +209,29 @@ export default function TicketsPage() {
           <div className={styles.filterGroup} style={{ flex: 1 }}>
             <div style={{ position: "relative" }}>
               <Search size={16} color="var(--text-muted)" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
-              <input 
-                type="text" 
-                placeholder="Поиск..." 
-                className={styles.input} 
+              <input
+                type="text"
+                placeholder="Поиск..."
+                className={styles.input}
                 style={{ paddingLeft: 36 }}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
-          
-          <button 
+
+          <button
             className={clsx(styles.filterToggleBtn, styles.mobileOnly)}
             onClick={() => setShowFilters(!showFilters)}
           >
             {showFilters ? "Скрыть" : "Фильтры"}
           </button>
         </div>
-        
+
         <div className={clsx(styles.filterSecondaryRow, !showFilters && styles.mobileHidden)}>
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Статус</label>
-            <select 
+            <select
               className={styles.select}
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -253,7 +250,7 @@ export default function TicketsPage() {
 
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Приоритет</label>
-            <select 
+            <select
               className={styles.select}
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
@@ -268,13 +265,13 @@ export default function TicketsPage() {
       </div>
 
       <div className={styles.tabsContainer}>
-        <button 
+        <button
           className={clsx(styles.tab, activeTab === "active" && styles.tabActive)}
           onClick={() => setActiveTab("active")}
         >
           Активные {activeTab === 'active' ? `(${tickets.length})` : ''}
         </button>
-        <button 
+        <button
           className={clsx(styles.tab, activeTab === "history" && styles.tabActive)}
           onClick={() => setActiveTab("history")}
         >
@@ -328,13 +325,13 @@ export default function TicketsPage() {
                     >
                       <MoreVertical size={18} />
                     </button>
-                    
+
                     {openMenuId === ticket.id && (
                       <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
                         <Link href={`/tickets/${ticket.id}`} className={styles.dropdownItem}>
                           <Eye size={16} /> Просмотр
                         </Link>
-                        
+
                         <button
                           className={clsx(styles.dropdownItem, styles.successItem)}
                           onClick={(e) => {
@@ -354,7 +351,7 @@ export default function TicketsPage() {
                             <XCircle size={16} /> Отменить
                           </button>
                         )}
-                        
+
                         {(userRole === 'ADMIN' || userRole === 'REGIONAL_MANAGER') && (
                           <button
                             className={clsx(styles.dropdownItem, styles.dangerItem)}
@@ -391,7 +388,7 @@ export default function TicketsPage() {
                 <div className={styles.cardHeader}>
                   <div className={styles.cardNumber}>#{ticket.ticketNumber.slice(-4)}</div>
                   <div className={styles.cardStatus}>{getStatusBadge(ticket.status)}</div>
-                  
+
                   <div className={styles.cardAction}>
                     <button
                       onClick={(e) => {
@@ -415,22 +412,22 @@ export default function TicketsPage() {
                   <h3 className={styles.cardTitle}>
                     {ticket.description.split('\n')[0].substring(0, 60)}{ticket.description.length > 60 ? '...' : ''}
                   </h3>
-                  
+
                   <div className={styles.cardMainInfo}>
-                     <div className={styles.infoLine}>
-                        <span className={styles.infoIcon}>📍</span>
-                        <span className={styles.infoText}>{ticket.location?.name || ticket.location?.address}</span>
-                     </div>
-                     <div className={styles.infoLine}>
-                        <span className={styles.infoIcon}>⚙️</span>
-                        <span className={styles.infoText}>{ticket.equipment?.model || "Общее оборудование"}</span>
-                     </div>
-                     <div className={styles.infoLine}>
-                        <span className={styles.infoIcon}>👤</span>
-                        <span className={styles.infoText} style={{ color: !ticket.engineer ? 'var(--text-muted)' : 'inherit' }}>
-                           {ticket.engineer?.name || "Не назначен"}
-                        </span>
-                     </div>
+                    <div className={styles.infoLine}>
+                      <span className={styles.infoIcon}>📍</span>
+                      <span className={styles.infoText}>{ticket.location?.name || ticket.location?.address}</span>
+                    </div>
+                    <div className={styles.infoLine}>
+                      <span className={styles.infoIcon}>⚙️</span>
+                      <span className={styles.infoText}>{ticket.equipment?.model || "Общее оборудование"}</span>
+                    </div>
+                    <div className={styles.infoLine}>
+                      <span className={styles.infoIcon}>👤</span>
+                      <span className={styles.infoText} style={{ color: !ticket.engineer ? 'var(--text-muted)' : 'inherit' }}>
+                        {ticket.engineer?.name || "Не назначен"}
+                      </span>
+                    </div>
                   </div>
 
                   <div className={styles.cardFooter}>

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import pageStyles from "@/app/page.module.css";
-import { Plus, Search, Trash2, Edit2, Loader2, X, Save, MapPin, Wrench } from "lucide-react";
+import { Plus, Search, Trash2, Edit2, Loader2, X, Save, Wrench } from "lucide-react";
 import clsx from "clsx";
+import EquipmentQR from "@/components/EquipmentQR";
 
 type Equipment = {
   id: string;
@@ -60,12 +61,12 @@ export default function EquipmentPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const url = editingItem 
+      const url = editingItem
         ? `/api/equipment?id=${editingItem.id}`
         : "/api/equipment";
-      
+
       const method = editingItem ? "PATCH" : "POST";
-      
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -114,7 +115,7 @@ export default function EquipmentPage() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Удалить это оборудование?")) return;
 
-    
+
     try {
       const res = await fetch(`/api/equipment?id=${id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -216,17 +217,8 @@ export default function EquipmentPage() {
                     ) : "—"}
                   </td>
                   <td>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <button
-                        onClick={() => {
-                          const url = `${window.location.origin}/tickets/new?equipmentId=${eq.id}`;
-                          window.open(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`, '_blank');
-                        }}
-                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: 4 }}
-                        title="QR-код для заявки"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16h.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
-                      </button>
+                    <div style={{ display: "flex", gap: 8, alignItems: "flex-start", flexWrap: "wrap" }}>
+                      <EquipmentQR equipmentId={eq.id} equipmentName={eq.model} />
                       <button
                         onClick={() => handleEdit(eq)}
                         style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent-primary)", padding: 4 }}
@@ -278,7 +270,7 @@ export default function EquipmentPage() {
                       placeholder="Напр: WMF 1500 S"
                       className={pageStyles.formInput}
                       value={formData.model}
-                      onChange={(e) => setFormData({...formData, model: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                       required
                     />
                   </div>
@@ -289,7 +281,7 @@ export default function EquipmentPage() {
                       placeholder="S/N"
                       className={pageStyles.formInput}
                       value={formData.serialNumber}
-                      onChange={(e) => setFormData({...formData, serialNumber: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, serialNumber: e.target.value })}
                       required
                     />
                   </div>
@@ -301,7 +293,7 @@ export default function EquipmentPage() {
                     <select
                       className={pageStyles.formInput}
                       value={formData.type}
-                      onChange={(e) => setFormData({...formData, type: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                     >
                       <option value="Суперавтомат">Суперавтомат</option>
                       <option value="Рожковая">Рожковая</option>
@@ -315,7 +307,7 @@ export default function EquipmentPage() {
                       type="date"
                       className={pageStyles.formInput}
                       value={formData.nextMaintenance}
-                      onChange={(e) => setFormData({...formData, nextMaintenance: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, nextMaintenance: e.target.value })}
                     />
                   </div>
                 </div>
@@ -325,7 +317,7 @@ export default function EquipmentPage() {
                   <select
                     className={pageStyles.formInput}
                     value={formData.locationId}
-                    onChange={(e) => setFormData({...formData, locationId: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, locationId: e.target.value })}
                     required
                   >
                     <option value="">Выберите локацию...</option>

@@ -9,13 +9,20 @@ const registerSchema = z.object({
   email: z.string().email("Некорректный email"),
   phone: z.string().min(5, "Укажите корректный телефон"),
   role: z.enum(["OPERATOR", "REGIONAL_MANAGER", "CLIENT_NETWORK_HEAD"]),
-  password: z.string().min(6, "Пароль должен быть не менее 6 символов"),
+  password: z
+    .string()
+    .min(8, "Пароль должен быть не менее 8 символов")
+    .regex(/[a-zA-Zа-яА-Я]/, "Пароль должен содержать хотя бы одну букву")
+    .regex(
+      /[!@#$%^&*()\-_=+\\|[\]{};:/?.><]/,
+      "Пароль должен содержать хотя бы один специальный символ"
+    ),
 });
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    
+
     // 1. Валидация данных через Zod
     const validation = registerSchema.safeParse(body);
     if (!validation.success) {
@@ -24,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     const { name, email, phone, role, password } = validation.data;
-    
+
     // 2. Check if user already exists
     const { data: existingUser, error: checkError } = await supabase
       .from('User')
@@ -41,7 +48,7 @@ export async function POST(request: Request) {
     const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
 
     // 5. Determine default role
-    const defaultRole = "OPERATOR"; 
+    const defaultRole = "OPERATOR";
 
     // 6. Create user in DB (isVerified: false)
     console.log("[REGISTER] Attempting to insert user into DB...");
@@ -63,21 +70,20 @@ export async function POST(request: Request) {
 
     if (createError) {
       console.error("[REGISTER] Create error details:", createError);
-      return NextResponse.json({ 
-        error: "Ошибка при создании пользователя", 
+      return NextResponse.json({
+        error: "Ошибка при создании пользователя",
         details: createError.message,
-        code: createError.code 
+        code: createError.code
       }, { status: 500 });
     }
 
     // 7. Mock sending email (In reality, would use Resend/SendGrid)
     console.log(`[EMAIL MOCK] Verification code for ${email}: ${verificationCode}`);
     // Here we can also send to Telegram for debug if token exists
-    
-    return NextResponse.json({ 
-      success: true, 
+
+    return NextResponse.json({
+      success: true,
       message: "Регистрация успешна. Подтвердите email.",
-      debugCode: verificationCode // Временно для тестирования
     });
 
   } catch (error) {

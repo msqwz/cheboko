@@ -56,7 +56,9 @@ export default async function Dashboard() {
 
   const role = (session.user as any).role;
 
-  if (role === 'CLIENT_MANAGER') {
+  // Клиентские роли и инженер — редирект на заявки
+  const clientRoles = ['CLIENT_MANAGER', 'CLIENT_NETWORK_HEAD', 'CLIENT_POINT_MANAGER', 'CLIENT_SPECIALIST', 'ENGINEER'];
+  if (clientRoles.includes(role)) {
     redirect("/tickets");
   }
 
@@ -87,27 +89,29 @@ export default async function Dashboard() {
 
   const newTicketsCount = allTickets?.filter(t => t.status === 'CREATED' || t.status === 'OPENED').length || 0;
   const highPriorityCount = allTickets?.filter(t => t.priority === 'HIGH' && t.status !== 'COMPLETED' && t.status !== 'CANCELED').length || 0;
-  
+
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const completedThisMonth = allTickets?.filter(t => 
-    t.status === 'COMPLETED' && 
+  const completedThisMonth = allTickets?.filter(t =>
+    t.status === 'COMPLETED' &&
     new Date(t.updatedAt) >= startOfMonth
   ).length || 0;
 
   const completedTickets = allTickets?.filter(t => t.status === 'COMPLETED') || [];
   let avgClosingTimeStr = "—";
-  
+
   if (completedTickets.length > 0) {
     const totalMs = completedTickets.reduce((acc, t) => {
-      const start = new Date(t.createdAt).getTime();
-      const end = new Date(t.updatedAt).getTime();
+      // По ТЗ: от статуса OPENED до COMPLETED
+      // Используем openedAt если есть, иначе createdAt
+      const start = new Date(t.openedAt || t.createdAt).getTime();
+      const end = new Date(t.completedAt || t.updatedAt).getTime();
       return acc + (end - start);
     }, 0);
-    
+
     const avgMs = totalMs / completedTickets.length;
     const avgHours = Math.round(avgMs / (1000 * 60 * 60));
-    
+
     if (avgHours < 24) {
       avgClosingTimeStr = `${avgHours} ч.`;
     } else {

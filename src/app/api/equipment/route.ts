@@ -2,6 +2,15 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { z } from "zod";
+
+const equipmentSchema = z.object({
+  serialNumber: z.string().min(1, "Серийный номер обязателен"),
+  model: z.string().min(1, "Модель обязательна"),
+  type: z.string().optional().default("Другое"),
+  locationId: z.string().uuid("Некорректный ID локации"),
+  nextMaintenance: z.string().nullable().optional(),
+});
 
 // GET /api/equipment - получить оборудование
 export async function GET(req: Request) {
@@ -50,20 +59,20 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { serialNumber, model, type, nextMaintenance, locationId, lat, lng } = body;
-
-    if (!serialNumber || !model || !locationId) {
-      return NextResponse.json({ error: "Serial number, model and location are required" }, { status: 400 });
+    const validation = equipmentSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
+    const { serialNumber, model, type, nextMaintenance, locationId } = validation.data;
 
     const eqData: any = {
       id: crypto.randomUUID(),
       serialNumber,
       name: model,
-      type: type || 'Другое',
+      type,
       locationId,
     };
-    
+
     // Пытаемся добавить поле, только если оно пришло, но не падаем если колонки нет
     if (nextMaintenance) eqData.nextMaintenance = nextMaintenance;
 

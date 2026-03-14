@@ -41,7 +41,7 @@ export async function GET(
 
     // Sort history by date descending
     if (result.history) {
-      result.history.sort((a: any, b: any) => 
+      result.history.sort((a: any, b: any) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
     }
@@ -57,62 +57,103 @@ export async function GET(
 // Разрешённые переходы статусов по ролям
 const ALLOWED_STATUS_TRANSITIONS: Record<string, Record<string, string[]>> = {
   ADMIN: {
-    CREATED:   ["OPENED", "CANCELED", "OPEN", "ASSIGNED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
-    OPENED:    ["ASSIGNED", "CANCELED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
-    OPEN:      ["ASSIGNED", "CANCELED", "OPENED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
-    ASSIGNED:  ["ENROUTE", "OPENED", "CANCELED", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
-    ENROUTE:   ["IN_WORK", "ASSIGNED", "CANCELED", "ON_HOLD", "COMPLETED", "RESOLVED"],
-    IN_WORK:   ["COMPLETED", "ON_HOLD", "CANCELED", "RESOLVED", "ASSIGNED", "ENROUTE"],
-    ON_HOLD:   ["IN_WORK", "CANCELED", "ASSIGNED", "ENROUTE", "COMPLETED", "RESOLVED"],
+    CREATED: ["OPENED", "CANCELED", "OPEN", "ASSIGNED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    OPENED: ["ASSIGNED", "CANCELED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    OPEN: ["ASSIGNED", "CANCELED", "OPENED", "ENROUTE", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    ASSIGNED: ["ENROUTE", "OPENED", "CANCELED", "IN_WORK", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    ENROUTE: ["IN_WORK", "ASSIGNED", "CANCELED", "ON_HOLD", "COMPLETED", "RESOLVED"],
+    IN_WORK: ["COMPLETED", "ON_HOLD", "CANCELED", "RESOLVED", "ASSIGNED", "ENROUTE"],
+    ON_HOLD: ["IN_WORK", "CANCELED", "ASSIGNED", "ENROUTE", "COMPLETED", "RESOLVED"],
     COMPLETED: [],
-    RESOLVED:  [],
-    CANCELED:  [],
-    CLOSED:    [],
+    RESOLVED: [],
+    CANCELED: [],
+    CLOSED: [],
 
   },
   OPERATOR: {
-    CREATED:   ["OPENED", "CANCELED", "OPEN"],
-    OPENED:    ["ASSIGNED", "CANCELED"],
-    OPEN:      ["ASSIGNED", "CANCELED", "OPENED"],
-    ASSIGNED:  ["ENROUTE", "OPENED", "CANCELED"],
-    ENROUTE:   ["IN_WORK", "ASSIGNED"],
-    IN_WORK:   ["ON_HOLD", "COMPLETED", "RESOLVED"],
-    ON_HOLD:   ["IN_WORK"],
+    CREATED: ["OPENED", "CANCELED", "OPEN"],
+    OPENED: ["ASSIGNED", "CANCELED"],
+    OPEN: ["ASSIGNED", "CANCELED", "OPENED"],
+    ASSIGNED: ["ENROUTE", "OPENED", "CANCELED"],
+    ENROUTE: ["IN_WORK", "ASSIGNED"],
+    IN_WORK: ["ON_HOLD", "COMPLETED", "RESOLVED"],
+    ON_HOLD: ["IN_WORK"],
     COMPLETED: [],
-    RESOLVED:  [],
-    CANCELED:  [],
-    CLOSED:    [],
+    RESOLVED: [],
+    CANCELED: [],
+    CLOSED: [],
 
   },
   ENGINEER: {
-    ASSIGNED:  ["ENROUTE"],
-    ENROUTE:   ["IN_WORK"],
-    IN_WORK:   ["COMPLETED", "ON_HOLD"],
-    ON_HOLD:   ["IN_WORK"],
-    CREATED:   [],
-    OPENED:    [],
+    ASSIGNED: ["ENROUTE"],
+    ENROUTE: ["IN_WORK"],
+    IN_WORK: ["COMPLETED", "ON_HOLD"],
+    ON_HOLD: ["IN_WORK"],
+    CREATED: [],
+    OPENED: [],
     COMPLETED: [],
-    CANCELED:  [],
+    CANCELED: [],
   },
   CLIENT: {
-    CREATED:   ["CANCELED"],
-    OPENED:    [],
-    ASSIGNED:  [],
-    ENROUTE:   [],
-    IN_WORK:   [],
-    ON_HOLD:   [],
+    CREATED: ["CANCELED"],
+    OPENED: [],
+    ASSIGNED: [],
+    ENROUTE: [],
+    IN_WORK: [],
+    ON_HOLD: [],
     COMPLETED: [],
-    CANCELED:  [],
+    CANCELED: [],
   },
   CLIENT_MANAGER: {
-    CREATED:   ["CANCELED"],
-    OPENED:    [],
-    ASSIGNED:  [],
-    ENROUTE:   [],
-    IN_WORK:   [],
-    ON_HOLD:   [],
+    CREATED: ["CANCELED"],
+    OPENED: [],
+    ASSIGNED: [],
+    ENROUTE: [],
+    IN_WORK: [],
+    ON_HOLD: [],
     COMPLETED: [],
-    CANCELED:  [],
+    CANCELED: [],
+  },
+  CLIENT_NETWORK_HEAD: {
+    CREATED: ["CANCELED"],
+    OPENED: [],
+    ASSIGNED: [],
+    ENROUTE: [],
+    IN_WORK: [],
+    ON_HOLD: [],
+    COMPLETED: [],
+    CANCELED: [],
+  },
+  CLIENT_POINT_MANAGER: {
+    CREATED: ["CANCELED"],
+    OPENED: [],
+    ASSIGNED: [],
+    ENROUTE: [],
+    IN_WORK: [],
+    ON_HOLD: [],
+    COMPLETED: [],
+    CANCELED: [],
+  },
+  CLIENT_SPECIALIST: {
+    CREATED: ["CANCELED"],
+    OPENED: [],
+    ASSIGNED: [],
+    ENROUTE: [],
+    IN_WORK: [],
+    ON_HOLD: [],
+    COMPLETED: [],
+    CANCELED: [],
+  },
+  REGIONAL_MANAGER: {
+    CREATED: ["OPENED", "CANCELED"],
+    OPENED: ["ASSIGNED", "CANCELED"],
+    OPEN: ["ASSIGNED", "CANCELED", "OPENED"],
+    ASSIGNED: ["ENROUTE", "OPENED", "CANCELED"],
+    ENROUTE: ["IN_WORK", "ASSIGNED"],
+    IN_WORK: ["COMPLETED", "ON_HOLD", "CANCELED"],
+    ON_HOLD: ["IN_WORK", "CANCELED"],
+    COMPLETED: [],
+    CANCELED: [],
   },
 };
 
@@ -209,6 +250,10 @@ export async function PATCH(
       await recordTicketHistory(id, userId, HistoryActions.ASSIGNMENT_CHANGE, ticket.engineerId || 'None', data.engineerId || 'None');
     }
 
+    if (data.priority && data.priority !== ticket.priority) {
+      await recordTicketHistory(id, userId, HistoryActions.PRIORITY_CHANGE, ticket.priority, data.priority);
+    }
+
     if (data.engineerComment && data.engineerComment !== ticket.engineerComment) {
       await recordTicketHistory(id, userId, HistoryActions.COMMENT_ADDED, undefined, data.engineerComment);
     }
@@ -239,7 +284,7 @@ export async function PATCH(
         // Уведомление о назначении инженера
         if (data.engineerId && data.engineerId !== ticket.engineerId) {
           const { notifyEngineerAssigned, notifyEngineerNewTask } = await import("@/lib/telegram");
-          
+
           // В общий чат
           await notifyEngineerAssigned(
             fullTicket.ticketNumber,

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export async function GET() {
   try {
@@ -50,7 +50,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
-    const password = await bcrypt.hash("12345678", 10);
+    // Создаём пользователя через систему приглашений (без пароля)
+    const invitationToken = crypto.randomBytes(32).toString('hex');
+    const invitationExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
     const { data: newUser, error } = await supabase
       .from('User')
@@ -61,14 +63,18 @@ export async function POST(req: Request) {
         role,
         phone,
         address: region,
-        password,
+        password: "INVITED_USER",
+        isVerified: false,
+        invitationToken,
+        invitationExpires,
       })
       .select()
       .single();
 
     if (error) throw error;
 
-    return NextResponse.json(newUser, { status: 201 });
+    const inviteLink = `${process.env.NEXTAUTH_URL}/invite/${invitationToken}`;
+    return NextResponse.json({ ...newUser, inviteLink }, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

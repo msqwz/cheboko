@@ -1,8 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function DebugPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") return;
+    const role = (session?.user as any)?.role;
+    if (!session || role !== "ADMIN") {
+      router.replace("/login");
+    }
+  }, [session, status, router]);
+
+  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
+    return null;
+  }
+
   const [logs, setLogs] = useState<string[]>([]);
 
   const addLog = (msg: string) => {
