@@ -7,8 +7,8 @@ import crypto from "crypto";
 import { z } from "zod";
 
 const ticketSchema = z.object({
-  locationId: z.string().uuid("Некорректный ID локации"),
-  equipmentId: z.string().uuid("Некорректный ID оборудования").optional().nullable(),
+  locationId: z.string().min(1, "Некорректный ID локации"),
+  equipmentId: z.string().optional().nullable(),
   problemType: z.string().min(1, "Укажите тип проблемы"),
   description: z.string().min(5, "Описание должно быть содержательным"),
   photos: z.array(z.string()).optional(),

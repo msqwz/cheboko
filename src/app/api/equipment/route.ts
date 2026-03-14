@@ -8,7 +8,7 @@ const equipmentSchema = z.object({
   serialNumber: z.string().min(1, "Серийный номер обязателен"),
   model: z.string().min(1, "Модель обязательна"),
   type: z.string().optional().default("Другое"),
-  locationId: z.string().uuid("Некорректный ID локации"),
+  locationId: z.string().min(1, "Некорректный ID локации"),
   nextMaintenance: z.string().nullable().optional(),
 });
 

@@ -33,14 +33,17 @@ export const authOptions: NextAuthOptions = {
         }
 
         const user = data[0] as User;
+        console.log('[AUTH] User found:', user.email, 'Role:', user.role);
 
         const isValid = await bcrypt.compare(credentials.password, user.password);
+        console.log('[AUTH] Password valid:', isValid);
         
         if (!isValid) {
           throw new Error("Неверный Email или пароль");
         }
 
         if (user.isVerified === false) {
+          console.warn('[AUTH] Email not verified for:', user.email);
           throw new Error("EMAIL_NOT_VERIFIED");
         }
 

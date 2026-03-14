@@ -17,6 +17,7 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
     { href: "/tickets", label: "Заявки", icon: TicketIcon },
     { href: "/map", label: "Карта", icon: Map },
     { href: "/equipment", label: "Оборудование", icon: Coffee },
+    { href: "/analytics", label: "Аналитика", icon: BarChart2 },
     { href: "/clients", label: "Клиенты", icon: Users },
     { href: "/team", label: "Сотрудники", icon: Wrench },
     { href: "/notifications", label: "Уведомления", icon: Bell },
@@ -36,6 +37,7 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
     { href: "/tickets", label: "Заявки", icon: TicketIcon },
     { href: "/map", label: "Карта", icon: Map },
     { href: "/equipment", label: "Оборудование", icon: Coffee },
+    { href: "/analytics", label: "Аналитика", icon: BarChart2 },
     { href: "/clients", label: "Клиенты", icon: Users },
     { href: "/team", label: "Сотрудники", icon: Wrench },
     { href: "/notifications", label: "Уведомления", icon: Bell },
@@ -49,6 +51,7 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
   CLIENT_NETWORK_HEAD: [
     { href: "/tickets", label: "Заявки", icon: TicketIcon },
     { href: "/equipment", label: "Оборудование", icon: Coffee },
+    { href: "/analytics", label: "Аналитика", icon: BarChart2 },
     { href: "/clients", label: "Мои точки", icon: Users },
     { href: "/notifications", label: "Уведомления", icon: Bell },
     { href: "/profile", label: "Профиль", icon: Users },
@@ -56,6 +59,7 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
   CLIENT_POINT_MANAGER: [
     { href: "/tickets", label: "Заявки", icon: TicketIcon },
     { href: "/equipment", label: "Оборудование", icon: Coffee },
+    { href: "/analytics", label: "Аналитика", icon: BarChart2 },
     { href: "/notifications", label: "Уведомления", icon: Bell },
     { href: "/profile", label: "Профиль", icon: Users },
   ],
