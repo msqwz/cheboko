@@ -3,9 +3,10 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default async function QRHandlerPage({ params }: { params: { id: string } }) {
+export default async function QRHandlerPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
-  const { id } = params;
+  const { id } = await params;
+
 
   // Если не авторизован — редирект на логин с возвратом сюда
   if (!session?.user) {

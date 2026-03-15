@@ -4,7 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, ListTodo, PlusCircle, User, ClipboardList, Bell, QrCode } from "lucide-react";
-import QRScanner from "@/components/QRScanner";
+import dynamic from "next/dynamic";
+const QRScanner = dynamic(() => import("@/components/QRScanner"), { ssr: false });
+
 
 
 import styles from "./BottomNav.module.css";

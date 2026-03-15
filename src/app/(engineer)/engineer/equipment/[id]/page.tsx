@@ -16,11 +16,12 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-export default async function EngineerEquipmentDetailPage({ params }: { params: { id: string } }) {
+export default async function EngineerEquipmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
 
-  const { id } = params;
+  const { id } = await params;
+
 
   // 1. Получаем данные оборудования
   const { data: equipment, error: eqError } = await supabase
