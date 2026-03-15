@@ -159,30 +159,33 @@ export default async function Dashboard() {
             <span className={styles.statValue}>{highPriorityCount}</span>
             <span className={styles.statLabel}>Критичный приоритет</span>
           </div>
-          <div className={styles.statIconWrapper}>
-            <AlertTriangle size={24} color="var(--status-high)" />
+          <div className={clsx(styles.statIconWrapper, styles.red)}>
+            <AlertTriangle size={24} />
           </div>
         </div>
+
 
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
             <span className={styles.statValue}>{avgClosingTimeStr}</span>
             <span className={styles.statLabel}>Среднее время закрытия</span>
           </div>
-          <div className={styles.statIconWrapper}>
-            <Clock size={24} color="var(--status-medium)" />
+          <div className={clsx(styles.statIconWrapper, styles.orange)}>
+            <Clock size={24} />
           </div>
         </div>
+
 
         <div className={styles.statCard}>
           <div className={styles.statInfo}>
             <span className={styles.statValue}>{completedThisMonth}</span>
             <span className={styles.statLabel}>Выполнено (Месяц)</span>
           </div>
-          <div className={styles.statIconWrapper}>
-            <CheckCircle2 size={24} color="var(--status-success)" />
+          <div className={clsx(styles.statIconWrapper, styles.green)}>
+            <CheckCircle2 size={24} />
           </div>
         </div>
+
       </section>
 
 

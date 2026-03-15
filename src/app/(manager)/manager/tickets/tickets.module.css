@@ -136,19 +136,20 @@
 .dropdownMenu {
   position: absolute;
   right: 0;
-  top: 100%;
+  top: calc(100% + 5px);
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-glass);
-  min-width: 180px;
-  max-height: 300px;
-  overflow-y: auto;
+  box-shadow: var(--shadow-float);
+  min-width: 200px;
+  max-height: 400px;
+  overflow-y: visible;
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  margin-top: 4px;
-  animation: dropdownFade 0.2s ease-out;
+  padding: 6px;
+  backdrop-filter: var(--glass-blur);
+  animation: dropdownFade 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes dropdownFade {
@@ -159,26 +160,24 @@
 .dropdownItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
+  gap: 12px;
+  padding: 10px 14px;
   color: var(--text-primary);
   text-decoration: none;
   background: none;
   border: none;
-  border-bottom: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   text-align: left;
   font-size: 14px;
+  font-weight: 500;
   width: 100%;
-  transition: background 0.2s;
-}
-
-.dropdownItem:last-child {
-  border-bottom: none;
+  transition: all 0.2s;
 }
 
 .dropdownItem:hover {
   background-color: var(--bg-hover);
+  color: var(--accent-primary);
 }
 
 .successItem {
@@ -189,7 +188,7 @@
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  overflow: visible !important; /* Allow dropdowns to show outside the container */
+  overflow: visible !important;
 }
 
 .desktopOnly {
@@ -200,7 +199,6 @@
   display: none;
 }
 
-/* Media Queries AT THE END for proper overrides */
 @media (max-width: 768px) {
   .pageHeader {
     flex-direction: column;
@@ -211,13 +209,13 @@
 
   .headerActions {
     display: flex;
-    flex-direction: row; /* Horizontal row */
+    flex-direction: row;
     gap: 8px;
     width: 100%;
   }
 
   .headerActions > * {
-    flex: 1; /* Both take equal space */
+    flex: 1;
     justify-content: center;
   }
   
@@ -273,16 +271,17 @@
     flex-direction: column;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     margin-bottom: 16px;
     position: relative;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-premium);
     overflow: hidden;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .mobileCard:active {
-    transform: scale(0.98);
+  .mobileCard:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
   }
 
   .cardHeader {

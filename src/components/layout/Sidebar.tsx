@@ -52,13 +52,16 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
     { href: "/operator/notifications", label: "Уведомления", icon: Bell },
   ],
   REGIONAL_MANAGER: [
-    { href: "/admin/analytics", label: "Аналитика", icon: BarChart2 },
-    { href: "/admin/clients", label: "Клиенты", icon: Users },
-    { href: "/admin/team", label: "Сотрудники", icon: Wrench },
-    { href: "/admin/notifications", label: "Уведомления", icon: Bell },
+    { href: "/manager", label: "Обзор", icon: LayoutDashboard },
+    { href: "/manager/tickets", label: "Заявки", icon: TicketIcon },
+    { href: "/manager/analytics", label: "Аналитика", icon: BarChart2 },
+    { href: "/manager/clients", label: "Клиенты", icon: Building2 },
+    { href: "/manager/team", label: "Сотрудники", icon: Users },
+    { href: "/manager/notifications", label: "Уведомления", icon: Bell },
+    { href: "/manager/profile", label: "Профиль", icon: Settings },
   ],
   ENGINEER: [
-    { href: "/engineer/tasks", label: "Мои заявки", icon: TicketIcon },
+    { href: "/engineer/tasks", label: "Задачи", icon: TicketIcon },
     { href: "/engineer/map", label: "Карта", icon: Map },
     { href: "/engineer/notifications", label: "Уведомления", icon: Bell },
     { href: "/engineer/profile", label: "Профиль", icon: Users },
@@ -90,6 +93,20 @@ const NAV_BY_ROLE: Record<string, { href: string; label: string; icon: any }[]> 
   ],
 };
 
+function getProfileHref(role: string): string {
+  switch (role) {
+    case "ADMIN": return "/admin/profile";
+    case "OPERATOR": return "/operator/profile";
+    case "ENGINEER": return "/engineer/profile";
+    case "REGIONAL_MANAGER": return "/manager/profile";
+    case "CLIENT_NETWORK_HEAD": return "/network/profile";
+    case "CLIENT_POINT_MANAGER": return "/point/profile";
+    case "CLIENT_SPECIALIST": return "/profile";
+    case "CLIENT_MANAGER": return "/profile";
+    default: return "/profile";
+  }
+}
+
 export function getRoleText(role: string): string {
   switch (role) {
     case "ADMIN": return "Администратор";
@@ -103,6 +120,7 @@ export function getRoleText(role: string): string {
     default: return role;
   }
 }
+
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -198,10 +216,11 @@ export default function Sidebar() {
         <div className={styles.avatar}>
           {session?.user?.name ? session.user.name.substring(0, 1) : <Users size={20} color="var(--text-muted)" />}
         </div>
-        <Link href="/admin/profile" className={styles.userInfo} style={{ textDecoration: "none", flex: 1 }}>
+        <Link href={getProfileHref(role || "")} className={styles.userInfo} style={{ textDecoration: "none", flex: 1 }}>
           <span className={styles.userName}>{session?.user?.name || "Пользователь"}</span>
           <span className={styles.userRole}>{getRoleText(role || "")}</span>
         </Link>
+
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
             onClick={toggleTheme}

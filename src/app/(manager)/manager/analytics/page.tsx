@@ -35,15 +35,18 @@ const STATUS_LABELS: Record<string, string> = {
 
 function MetricCard({ label, value, sub, accent }: { label: string; value: string | number; sub?: string; accent?: boolean }) {
     return (
-        <div className={pageStyles.card} style={{ padding: "20px 24px", minWidth: 160 }}>
-            <div style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 6 }}>{label}</div>
-            <div style={{ fontSize: 28, fontWeight: 700, color: accent ? "var(--accent-primary)" : "var(--text-primary)" }}>
-                {value ?? "—"}
+        <div className={pageStyles.statCard} style={{ minWidth: 160, display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <div className={pageStyles.statInfo}>
+                <span className={pageStyles.statLabel}>{label}</span>
+                <span className={clsx(pageStyles.statValue, accent && pageStyles.accentText)}>
+                    {value ?? "—"}
+                </span>
+                {sub && <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{sub}</div>}
             </div>
-            {sub && <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{sub}</div>}
         </div>
     );
 }
+
 
 export default function AnalyticsPage() {
     const { data: session } = useSession();
