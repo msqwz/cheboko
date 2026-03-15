@@ -18,7 +18,6 @@ import {
   ChevronRight,
   MoreVertical,
   BarChart,
-  Ticket,
   Map,
   Wrench,
   Moon,
@@ -26,6 +25,7 @@ import {
   QrCode,
   Scan
 } from "lucide-react";
+
 
 
 import dynamic from "next/dynamic";
