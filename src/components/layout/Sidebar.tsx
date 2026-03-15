@@ -22,8 +22,13 @@ import {
   Map,
   Wrench,
   Moon,
-  Sun
+  Sun,
+  QrCode,
+  Scan
 } from "lucide-react";
+
+import QRScanner from "@/components/QRScanner";
+
 import styles from "./Sidebar.module.css";
 import clsx from "clsx";
 import { useState, useEffect } from "react";
@@ -130,6 +135,8 @@ export default function Sidebar() {
   const { theme, toggleTheme } = useTheme();
 
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
 
   useEffect(() => {
     if (!session?.user) return;
@@ -210,7 +217,22 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        
+        {/* Специальная кнопка Сканера для всех ролей */}
+        <button 
+          onClick={() => setIsScannerOpen(true)}
+          className={styles.scanBtn}
+        >
+          <QrCode className={styles.icon} />
+          Сканировать QR
+        </button>
+
       </nav>
+
+      {isScannerOpen && (
+        <QRScanner onClose={() => setIsScannerOpen(false)} />
+      )}
+
 
       <div className={styles.footer}>
         <div className={styles.avatar}>

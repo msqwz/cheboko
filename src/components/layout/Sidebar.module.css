@@ -80,6 +80,31 @@
   transform: translateX(4px);
 }
 
+.scanBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  margin-top: 16px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  color: var(--accent-primary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.scanBtn:hover {
+  background: var(--accent-glow);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+
 
 .icon {
   width: 20px;

@@ -14,8 +14,16 @@ export default function EquipmentQR({ equipmentId, equipmentName }: EquipmentQRP
 
     useEffect(() => {
         if (!show || !canvasRef.current) return;
-        const url = `${window.location.origin}/tickets/new?equipmentId=${equipmentId}`;
-        QRCode.toCanvas(canvasRef.current, url, { width: 200, margin: 2 });
+        const url = `${window.location.origin}/q/${equipmentId}`;
+        QRCode.toCanvas(canvasRef.current, url, { 
+            width: 200, 
+            margin: 2,
+            color: {
+                dark: "#0F172A",
+                light: "#FFFFFF"
+            }
+        });
+
     }, [show, equipmentId]);
 
     const handlePrint = () => {

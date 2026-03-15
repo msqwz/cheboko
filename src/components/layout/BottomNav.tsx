@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListTodo, PlusCircle, User, ClipboardList, Bell } from "lucide-react";
+import { LayoutDashboard, ListTodo, PlusCircle, User, ClipboardList, Bell, QrCode } from "lucide-react";
+import QRScanner from "@/components/QRScanner";
+
+
 import styles from "./BottomNav.module.css";
 import clsx from "clsx";
 
@@ -42,27 +46,58 @@ export default function BottomNav() {
   // Выбор меню
   const NAV_ITEMS = role === 'ENGINEER' ? engineerNavItems : clientNavItems;
 
-  return (
-    <nav className={styles.bottomNav}>
-      <div className={styles.navList}>
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
 
-          
-          return (
-            <Link 
-              key={item.href} 
-              href={item.href} 
-              className={clsx(styles.navItem, isActive && styles.active)}
-            >
-              <Icon className={styles.icon} strokeWidth={isActive ? 2.5 : 2} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+  return (
+    <>
+      <nav className={styles.bottomNav}>
+        <div className={styles.navList}>
+          {NAV_ITEMS.map((item, index) => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
+
+            // Вставляем кнопку сканера посередине
+            if (index === 1) {
+              return (
+                <div key="center-scan" style={{ display: 'contents' }}>
+                  <Link 
+                    key={item.href} 
+                    href={item.href} 
+                    className={clsx(styles.navItem, isActive && styles.active)}
+                  >
+                    <Icon className={styles.icon} strokeWidth={isActive ? 2.5 : 2} />
+                    <span>{item.label}</span>
+                  </Link>
+
+                  <button 
+                    onClick={() => setIsScannerOpen(true)}
+                    className={styles.scanFab}
+                  >
+                    <QrCode size={24} color="#fff" />
+                  </button>
+                </div>
+              );
+            }
+            
+            return (
+              <Link 
+                key={item.href} 
+                href={item.href} 
+                className={clsx(styles.navItem, isActive && styles.active)}
+              >
+                <Icon className={styles.icon} strokeWidth={isActive ? 2.5 : 2} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+
+      {isScannerOpen && (
+        <QRScanner onClose={() => setIsScannerOpen(false)} />
+      )}
+    </>
   );
 }
+
 
