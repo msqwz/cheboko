@@ -151,12 +151,12 @@ export async function GET(req: Request) {
 
     if (userRole === 'REGIONAL_MANAGER') {
       // Менеджер региона видит только локации своего региона
-      const { data: userData } = await supabase.from('User').select('region').eq('id', userId).single();
-      if (userData?.region) {
+      const region = session.user.region;
+      if (region) {
         const { data: regionLocations } = await supabase
           .from('Location')
           .select('id')
-          .eq('region', userData.region);
+          .eq('region', region);
         const locationIds = (regionLocations || []).map((l: any) => l.id);
         if (locationIds.length === 0) return NextResponse.json([]);
         query = query.in('locationId', locationIds);
@@ -165,16 +165,16 @@ export async function GET(req: Request) {
       }
     } else if (userRole === 'CLIENT_NETWORK_HEAD') {
       // Руководитель сети видит все заявки своей компании
-      // В текущей схеме clientId в билете — это ID пользователя-руководителя или компании
       query = query.eq('clientId', userId);
     } else if (userRole === 'CLIENT_POINT_MANAGER') {
       // Управляющий точкой видит только заявки по своему адресу
-      const { data: userData } = await supabase.from('User').select('locationId').eq('id', userId).single();
-      if (userData?.locationId) {
-        query = query.eq('locationId', userData.locationId);
+      const locationId = session.user.locationId;
+      if (locationId) {
+        query = query.eq('locationId', locationId);
       } else {
         return NextResponse.json([]);
       }
+
     } else if (userRole === 'CLIENT_SPECIALIST') {
       // Специалист видит только свои заявки
       query = query.eq('creatorId', userId);

@@ -8,6 +8,9 @@ export interface User {
   address: string | null;
   latitude: string | null;
   longitude: string | null;
+  region: string | null;
+  locationId: string | null;
+
   
   // Verification fields
   isVerified?: boolean;

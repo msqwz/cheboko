@@ -57,7 +57,10 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           role: user.role,
           phone: user.phone ?? null,
+          region: user.region ?? null,
+          locationId: user.locationId ?? null,
         };
+
       }
     })
   ],
@@ -70,7 +73,10 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.id = user.id;
         token.phone = user.phone;
+        token.region = user.region;
+        token.locationId = user.locationId;
       }
+
       return token;
     },
     async session({ session, token }) {
@@ -78,7 +84,10 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role;
         session.user.id = token.id;
         session.user.phone = token.phone;
+        session.user.region = token.region;
+        session.user.locationId = token.locationId;
       }
+
       return session;
     }
   },

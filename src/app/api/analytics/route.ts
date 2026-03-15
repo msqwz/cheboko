@@ -32,9 +32,9 @@ export async function GET(req: Request) {
 
     // Изоляция по роли
     if (role === "REGIONAL_MANAGER") {
-      const { data: userData } = await supabase.from("User").select("region").eq("id", userId).single();
-      if (userData?.region) {
-        const { data: regionLocs } = await supabase.from("Location").select("id").eq("region", userData.region);
+      const region = session.user.region;
+      if (region) {
+        const { data: regionLocs } = await supabase.from("Location").select("id").eq("region", region);
         const locIds = (regionLocs || []).map((l: any) => l.id);
         if (locIds.length === 0) return NextResponse.json(buildEmptyResponse());
         query = query.in("locationId", locIds);
@@ -44,13 +44,14 @@ export async function GET(req: Request) {
     } else if (role === "CLIENT_NETWORK_HEAD") {
       query = query.eq("clientId", userId);
     } else if (role === "CLIENT_POINT_MANAGER") {
-      const { data: userData } = await supabase.from("User").select("locationId").eq("id", userId).single();
-      if (userData?.locationId) {
-        query = query.eq("locationId", userData.locationId);
+      const locationId = session.user.locationId;
+      if (locationId) {
+        query = query.eq("locationId", locationId);
       } else {
         return NextResponse.json(buildEmptyResponse());
       }
     }
+
 
     // Фильтры
     if (periodFrom) query = query.gte("createdAt", periodFrom);

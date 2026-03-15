@@ -31,10 +31,14 @@
 
 .logoText {
   font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--text-primary);
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: var(--grad-primary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+
 
 .nav {
   flex: 1;
@@ -47,27 +51,35 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 12px 16px;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
 }
 
 .navItem:hover {
   background-color: var(--bg-hover);
   color: var(--text-primary);
+  border-color: var(--border-color);
+  transform: translateX(4px);
 }
 
+
 .activeNavItem {
-  background-color: var(--accent-glow);
-  color: var(--accent-primary);
+  background: var(--grad-primary);
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
 .activeNavItem:hover {
-  background-color: var(--accent-glow);
+  background: var(--grad-primary);
+  filter: brightness(1.1);
+  transform: translateX(4px);
 }
+
 
 .icon {
   width: 20px;
