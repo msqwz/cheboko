@@ -17,7 +17,8 @@ export default function EngineerTasks() {
     if (!session?.user) return;
     setLoading(true);
     try {
-      const { id } = session.user as any;
+      const { id } = session.user;
+
       const url = activeTab === "assigned" 
         ? `/api/tickets?engineerId=${id}&status=active`
         : `/api/tickets?onlyCreated=true&status=all`;
@@ -153,3 +154,4 @@ export default function EngineerTasks() {
     </div>
   );
 }
+

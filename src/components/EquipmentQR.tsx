@@ -77,3 +77,4 @@ export default function EquipmentQR({ equipmentId, equipmentName }: EquipmentQRP
         </div>
     );
 }
+

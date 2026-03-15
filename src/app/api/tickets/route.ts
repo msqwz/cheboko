@@ -74,8 +74,9 @@ export async function POST(req: Request) {
         title: problemType,
         description,
         attachments: attachments || photos || [],
-        creatorId: (session.user as any).id,
-        clientId: loc?.clientId || (session.user as any).id,
+        creatorId: session.user.id,
+        clientId: loc?.clientId || session.user.id,
+
         status: "CREATED",
         priority: "MEDIUM",
       })
@@ -102,7 +103,8 @@ export async function POST(req: Request) {
     // 3. Записываем в историю
     await recordTicketHistory(
       newTicket.id,
-      (session.user as any).id,
+      session.user.id,
+
       HistoryActions.CREATED,
       undefined,
       newTicket.status
@@ -143,8 +145,9 @@ export async function GET(req: Request) {
       .order('createdAt', { ascending: false });
 
     // Изоляция данных согласно матрице прав по ТЗ
-    const userRole = (session.user as any).role;
-    const userId = (session.user as any).id;
+    const userRole = session.user.role;
+    const userId = session.user.id;
+
 
     if (userRole === 'REGIONAL_MANAGER') {
       // Менеджер региона видит только локации своего региона

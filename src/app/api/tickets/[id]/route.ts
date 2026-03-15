@@ -168,8 +168,9 @@ export async function PATCH(
 
     const { id } = await params;
     const data = await request.json();
-    const role = (session.user as { role?: string }).role || '';
-    const userId = (session.user as { id?: string }).id || '';
+    const role = session.user.role;
+    const userId = session.user.id;
+
 
     const { data: ticket, error: fetchError } = await supabase
       .from('Ticket')
@@ -324,7 +325,8 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || !['ADMIN', 'OPERATOR'].includes((session.user as any).role)) {
+    if (!session?.user || !['ADMIN', 'OPERATOR'].includes(session.user.role)) {
+
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

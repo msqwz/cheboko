@@ -11,7 +11,8 @@ import { useSession } from "next-auth/react";
 export default function BottomNav() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const role = (session?.user as any)?.role;
+  const role = session?.user?.role;
+
 
   // Не рендерим на странице авторизации
   if (
@@ -46,7 +47,8 @@ export default function BottomNav() {
       <div className={styles.navList}>
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
-          const Icon = item.icon as any;
+          const Icon = item.icon;
+
           
           return (
             <Link 
@@ -63,3 +65,4 @@ export default function BottomNav() {
     </nav>
   );
 }
+

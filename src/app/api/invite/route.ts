@@ -19,7 +19,8 @@ export async function POST(request: Request) {
     }
 
     // Role safety check - can the invoker invite this role?
-    const invokerRole = (session.user as any).role;
+    const invokerRole = session.user.role;
+
     const allowedRoles = ROLE_HIERARCHY[invokerRole] || [];
     
     // Admin can do anything, or we check against hierarchy

@@ -46,8 +46,9 @@ export async function POST(request: Request) {
       const buffer = Buffer.from(bytes);
 
       const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const userId = (session.user as any).id as string;
+      const userId = session.user.id;
       const fileName = `${Date.now()}-${userId.slice(0, 8)}.${ext}`;
+
       const filePath = `uploads/${fileName}`;
 
       const { error: uploadError } = await supabase.storage

@@ -15,7 +15,8 @@ export async function PATCH(req: Request) {
     const { lat, lng, region } = body;
 
     // Только инженер может обновлять свою позицию
-    if ((session.user as any).role !== 'ENGINEER') {
+    if (session.user.role !== 'ENGINEER') {
+
       return NextResponse.json({ error: "Only engineers can update location" }, { status: 403 });
     }
 

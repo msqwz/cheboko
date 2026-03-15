@@ -13,8 +13,9 @@ export default function ProfilePage() {
   
   const [profileData, setProfileData] = useState({
     name: session?.user?.name || "",
-    phone: (session?.user as any)?.phone || "",
-    region: (session?.user as any)?.region || "",
+    phone: session?.user?.phone || "",
+    region: session?.user?.region || "",
+
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -129,7 +130,7 @@ export default function ProfilePage() {
             </div>
             <h2 style={{ fontSize: 20, fontWeight: 600, color: "var(--text-primary)" }}>{session?.user?.name || "Загрузка..."}</h2>
             <p style={{ fontSize: 14, color: "var(--accent-primary)", fontWeight: 500, marginTop: 4 }}>
-              {getRoleText((session?.user as any)?.role || "")}
+              {getRoleText(session?.user?.role || "")}
             </p>
           </div>
           <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
@@ -137,7 +138,8 @@ export default function ProfilePage() {
               <Mail size={16} /> {session?.user?.email || "—"}
             </div>
             <div style={{ display: "flex", gap: 12, color: "var(--text-muted)", fontSize: 14 }}>
-              <Phone size={16} /> {(session?.user as any)?.phone || "Нет телефона"}
+              <Phone size={16} /> {session?.user?.phone || "Нет телефона"}
+
             </div>
             <div style={{ display: "flex", gap: 12, color: "var(--text-muted)", fontSize: 14 }}>
               <MapPin size={16} /> Санкт-Петербург, РФ
@@ -165,7 +167,7 @@ export default function ProfilePage() {
                   <label className={pageStyles.formLabel}>Должность</label>
                   <input
                     type="text"
-                    value={getRoleText((session?.user as any)?.role || "")}
+                    value={getRoleText(session?.user?.role || "")}
                     disabled
                     className={pageStyles.formInput}
                   />
@@ -287,5 +289,6 @@ export default function ProfilePage() {
     </div>
   );
 }
+
 
 

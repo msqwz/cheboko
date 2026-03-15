@@ -47,7 +47,7 @@ function MetricCard({ label, value, sub, accent }: { label: string; value: strin
 
 export default function AnalyticsPage() {
     const { data: session } = useSession();
-    const role = (session?.user as any)?.role;
+    const role = session?.user?.role;
 
     const [data, setData] = useState<AnalyticsData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -301,4 +301,5 @@ export default function AnalyticsPage() {
         </div>
     );
 }
+
 

@@ -14,7 +14,8 @@ export default async function PointDashboard() {
     redirect("/login");
   }
 
-  const role = (session.user as any).role;
+  const role = session.user.role;
+
   if (role !== 'CLIENT_POINT_MANAGER') {
     redirect("/");
   }
@@ -28,7 +29,8 @@ export default async function PointDashboard() {
       location:Location!locationId(*),
       equipment:Equipment!equipmentId(*)
     `)
-    .eq('creatorId', (session.user as any).id)
+    .eq('creatorId', session.user.id)
+
     .order('createdAt', { ascending: false })
     .limit(5);
 
@@ -99,3 +101,4 @@ export default async function PointDashboard() {
     </div>
   );
 }
+

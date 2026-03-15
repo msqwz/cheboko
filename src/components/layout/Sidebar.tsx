@@ -107,8 +107,10 @@ export function getRoleText(role: string): string {
 export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const role = (session?.user as any)?.role as string;
+  const role = session?.user?.role;
+
   const { theme, toggleTheme } = useTheme();
+
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -139,7 +141,8 @@ export default function Sidebar() {
     return null;
   }
 
-  const navItems = NAV_BY_ROLE[role] ?? NAV_BY_ROLE["ADMIN"];
+  const navItems = (role && NAV_BY_ROLE[role]) ? NAV_BY_ROLE[role] : NAV_BY_ROLE["ADMIN"];
+
 
   return (
     <aside className={styles.sidebar}>
@@ -151,7 +154,8 @@ export default function Sidebar() {
       </div>
 
       <nav className={styles.nav}>
-        {navItems.map((item) => {
+        {navItems.map((item: { href: string; label: string; icon: any }) => {
+
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(`${item.href}/`));
           const Icon = item.icon;
           const showBadge = item.href.includes("notifications") && unreadCount > 0;
@@ -218,3 +222,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+

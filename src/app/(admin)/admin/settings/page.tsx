@@ -21,7 +21,7 @@ type SettingsData = {
 
 export default function SettingsPage() {
   const { data: session } = useSession();
-  const isAdmin = (session?.user as any)?.role === 'ADMIN';
+  const isAdmin = session?.user?.role === 'ADMIN';
   const [activeTab, setActiveTab] = useState("general");
 
   const [isLoading, setIsLoading] = useState(true);
@@ -388,3 +388,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

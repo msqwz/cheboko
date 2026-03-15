@@ -267,7 +267,8 @@ export default function TicketDetail() {
                
                <div className={styles.actionBtnRow}>
                  {/* Инженер видит свои кнопки, или Админ видит всё */}
-                 {(session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.id === ticket.engineerId ? (
+                 {session?.user?.role === 'ADMIN' || session?.user?.id === ticket.engineerId ? (
+
                    <>
                      {(ticket.status === "ASSIGNED" || (ticket.status === "OPENED" && ticket.engineerId)) && (
                        <button className={styles.btnPrimary} onClick={() => updateTicket({ status: "ENROUTE" })} disabled={isUpdating}>
@@ -325,7 +326,8 @@ export default function TicketDetail() {
             <div className={styles.divider} />
 
              {/* Панель Оператора / Админа */}
-            {((session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.role === 'OPERATOR') && (
+            {(session?.user?.role === 'ADMIN' || session?.user?.role === 'OPERATOR') && (
+
               <div className={styles.controlGroup}>
                 <span className={styles.infoLabel} style={{ marginBottom: 12, display: "block", fontSize: 13, fontWeight: 700 }}>Панель управления</span>
                 

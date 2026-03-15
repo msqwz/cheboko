@@ -10,13 +10,13 @@ export default function DebugPage() {
 
   useEffect(() => {
     if (status === "loading") return;
-    const role = (session?.user as any)?.role;
+    const role = session?.user?.role;
     if (!session || role !== "ADMIN") {
       router.replace("/login");
     }
   }, [session, status, router]);
 
-  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
+  if (status === "loading" || session?.user?.role !== "ADMIN") {
     return null;
   }
 
@@ -63,3 +63,4 @@ export default function DebugPage() {
     </div>
   );
 }
+

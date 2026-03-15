@@ -9,7 +9,8 @@ export default async function RootPage() {
     redirect("/login");
   }
 
-  const role = (session.user as any).role;
+  const role = session.user.role;
+
 
   // Инженер — на задачи
   if (role === 'ENGINEER') {
@@ -45,3 +46,4 @@ export default async function RootPage() {
   // По умолчанию (только Админы) — на дашборд
   redirect("/admin");
 }
+

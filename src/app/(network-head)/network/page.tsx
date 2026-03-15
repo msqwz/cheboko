@@ -14,7 +14,8 @@ export default async function NetworkDashboard() {
     redirect("/login");
   }
 
-  const role = (session.user as any).role;
+  const role = session.user.role;
+
   if (role !== 'CLIENT_NETWORK_HEAD') {
     redirect("/");
   }
@@ -123,3 +124,4 @@ export default async function NetworkDashboard() {
     </div>
   );
 }
+

@@ -54,8 +54,9 @@ const getPriorityText = (priority: string | null) => {
 
 export default function TicketsPage() {
   const { data: session } = useSession();
-  const userId = (session?.user as any)?.id;
-  const userRole = (session?.user as any)?.role;
+  const userId = session?.user?.id;
+  const userRole = session?.user?.role;
+
 
   const [activeTab, setActiveTab] = useState("active");
   const [searchQuery, setSearchQuery] = useState("");
@@ -122,6 +123,7 @@ export default function TicketsPage() {
         if (searchQuery) params.append('search', searchQuery);
         if (userRole === 'CLIENT_MANAGER') {
           params.append('creatorId', userId || '');
+
         }
 
         const res = await fetch(`/api/tickets?${params.toString()}`);
@@ -447,3 +449,4 @@ export default function TicketsPage() {
     </div>
   );
 }
+

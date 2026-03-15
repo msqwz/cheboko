@@ -54,7 +54,8 @@ export default async function Dashboard() {
     redirect("/login");
   }
 
-  const role = (session.user as any).role;
+  const role = session.user.role;
+
 
   // Инженер — редирект на список задач (PWA)
   if (role === 'ENGINEER') {
@@ -233,4 +234,5 @@ export default async function Dashboard() {
     </div>
   );
 }
+
 
